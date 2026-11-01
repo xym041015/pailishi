@@ -21,7 +21,14 @@ pnpm build
 
 构建产物在 `.output/`，可部署到任何支持 Node.js 或静态托管的海绵体（Cloudflare Pages / Vercel / Netlify 等）。
 
-推荐 Cloudflare Pages Git 集成：推到 GitHub → Cloudflare Pages → Connect to Git → 框架选 Nuxt → 部署。
+推荐 Cloudflare Workers 静态资产部署（站点完全在浏览器运行，无需 SSR）：
+
+```bash
+pnpm run generate   # 产物在 .output/public
+npx wrangler deploy # 读取 wrangler.jsonc（assets-only）
+```
+
+Git 集成下 Cloudflare 自动执行：Build command `pnpm run generate` → Deploy command `npx wrangler deploy`。也可部署到 Vercel / Netlify / 任意静态托管（指向 `.output/public`）。
 
 ## 识别模型来源
 

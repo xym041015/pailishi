@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ModelConfig } from '../composables/types'
 import { convertToMathML, formatLatex, orthographyToLaTeX } from '../composables/textProcessor'
-import { latexToDocxBlob, downloadBlob } from '../utils/docxExport'
+// docxExport 改为 exportDocx 内动态加载（客户端专用依赖，见下方注释）
 import {
   type EngineSettings,
   loadEngineSettings,
@@ -159,6 +159,9 @@ async function exportDocx() {
   if (!latexCode.value || exporting.value) return
   exporting.value = true
   try {
+    // 客户端动态加载：docx 依赖链（whatwg-url → punycode）不能进 SSR 包，
+    // 否则 Nitro cloudflare 预设的 unenv shim 会报 ENOTDIR
+    const { latexToDocxBlob, downloadBlob } = await import('../utils/docxExport')
     const blob = await latexToDocxBlob(latexCode.value)
     downloadBlob(blob, `拍立式-公式-${Date.now()}.docx`)
     toast.add({ title: t('export_success'), color: 'success', duration: 2000 })
