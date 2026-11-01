@@ -1,0 +1,13 @@
+// Cloudflare Workers 部署配置（配合 Nitro cloudflare_module 预设）
+// 构建：NITRO_PRESET=cloudflare_module pnpm run build
+// 产物：.output/server/index.mjs（SSR worker）+ .output/public（静态资产）
+{
+  "name": "pailishi",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".output/public",
+    "binding": "ASSETS"
+  }
+}

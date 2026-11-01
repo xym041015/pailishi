@@ -59,8 +59,8 @@ export default defineNuxtConfig({
       copyKatexFonts(nuxt.options.rootDir)
     },
     'nitro:build:public-assets': (nitro) => {
-      // cloudflare-pages 预设下静态资产由 CDN 服务，不需要镜像到 server chunks
-      if (nitro?.options?.preset === 'cloudflare-pages') return
+      // cloudflare-pages / cloudflare_module 预设下静态资产由 assets 目录服务，不需要镜像到 server chunks
+      if (nitro?.options?.preset === 'cloudflare-pages' || nitro?.options?.preset === 'cloudflare_module') return
       const publicDir = nitro?.options?.output?.publicDir
       const serverDir = nitro?.options?.output?.serverDir
       nitroOutputDirs = { publicDir, serverDir }
@@ -69,8 +69,8 @@ export default defineNuxtConfig({
       }
     },
     'build:done': () => {
-      // cloudflare-pages 预设下跳过镜像
-      if (process.env.NITRO_PRESET === 'cloudflare-pages') return
+      // cloudflare-pages / cloudflare_module 预设下跳过镜像
+      if (process.env.NITRO_PRESET === 'cloudflare-pages' || process.env.NITRO_PRESET === 'cloudflare_module') return
       if (nitroOutputDirs.publicDir && nitroOutputDirs.serverDir) {
         mirrorPublicAssets(nitroOutputDirs.publicDir, resolve(nitroOutputDirs.serverDir))
         return
