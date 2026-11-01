@@ -1,0 +1,362 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/*
+  拍立式设计 token v2.1 ——「数学老师的备课纸」
+  方格纸底 + 纸白面板 + 钢笔墨水蓝 + 荧光笔黄 + 批改红；.dark = 墨蓝夜色
+*/
+:root {
+  --pk-page: #f3f5f8;
+  --pk-grid: rgba(43, 92, 143, 0.07);
+  --pk-grid-bold: rgba(43, 92, 143, 0.13);
+  --pk-panel: #fdfeff;
+  --pk-line: #dce3ea;
+  --pk-edit-bg: #f8fafc;
+  --pk-ink: #22303c;
+  --pk-muted: #64717d;
+  --pk-icon: #8895a3;
+  --pk-primary: #2b5c8f;
+  --pk-primary-hover: #24507c;
+  --pk-primary-soft: #e7eff7;
+  --pk-board: #1f3d5c;
+  --pk-chalk: #f5f8fb;
+  --pk-chalk-dim: rgba(245, 248, 251, 0.72);
+  --pk-highlight: #f6e27a;
+  --pk-highlight-soft: #fbf3cf;
+  --pk-success: #3a9970;
+  --pk-warn: #d4574e;
+  --pk-warn-bg: #fbeeec;
+  --pk-math: rgba(43, 92, 143, 0.06);
+  --pk-serif: "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", Georgia, serif;
+}
+
+.dark {
+  --pk-page: #16212b;
+  --pk-grid: rgba(245, 248, 251, 0.05);
+  --pk-grid-bold: rgba(245, 248, 251, 0.09);
+  --pk-panel: #1f2b37;
+  --pk-line: #34424f;
+  --pk-edit-bg: #1a2530;
+  --pk-ink: #e9eef3;
+  --pk-muted: #93a5b5;
+  --pk-icon: #7a8b99;
+  --pk-primary: #5c9fd4;
+  --pk-primary-hover: #6fb0e0;
+  --pk-primary-soft: #1e3242;
+  --pk-board: #0e1a26;
+  --pk-chalk: #f5f8fb;
+  --pk-chalk-dim: rgba(245, 248, 251, 0.72);
+  --pk-highlight: #e8cf5e;
+  --pk-highlight-soft: #3f3a22;
+  --pk-success: #4db389;
+  --pk-warn: #e07a72;
+  --pk-warn-bg: #3a2523;
+  --pk-math: rgba(245, 248, 251, 0.04);
+}
+
+/* 纸面粉笔数学字水印：固定层，只在面板之外的空白处露出来 */
+.pk-math-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.pk-math-bg span {
+  position: absolute;
+  font-family: "STIX Two Math", "Cambria Math", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  color: var(--pk-math);
+  line-height: 1;
+  user-select: none;
+}
+
+.pk-math-bg .pk-g-pi {
+  left: 2%;
+  bottom: 4%;
+  font-size: 210px;
+  transform: rotate(-10deg);
+}
+
+.pk-math-bg .pk-g-sum {
+  right: 1.5%;
+  bottom: 10%;
+  font-size: 180px;
+  transform: rotate(8deg);
+}
+
+.pk-math-bg .pk-g-int {
+  left: 40%;
+  bottom: -5%;
+  font-size: 240px;
+}
+
+.pk-math-bg .pk-g-inf {
+  left: 63%;
+  bottom: 1%;
+  font-size: 130px;
+  transform: rotate(-6deg);
+}
+
+.pk-math-bg .pk-g-theta {
+  right: 27%;
+  bottom: 6%;
+  font-size: 150px;
+  transform: rotate(6deg);
+}
+
+.pk-math-bg .pk-g-root {
+  left: 13%;
+  bottom: -2%;
+  font-size: 170px;
+  transform: rotate(4deg);
+}
+
+body {
+  background-color: var(--pk-page);
+  color: var(--pk-ink);
+  /* 方格纸：24px 细格 + 120px 粗格 */
+  background-image:
+    linear-gradient(var(--pk-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pk-grid) 1px, transparent 1px),
+    linear-gradient(var(--pk-grid-bold) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pk-grid-bold) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+}
+
+.pk-serif {
+  font-family: var(--pk-serif);
+}
+
+/* 面板骨架：纸片 + 投影 */
+.pk-panel {
+  background: var(--pk-panel);
+  border: 1px solid var(--pk-line);
+  border-radius: 8px;
+  box-shadow:
+    0 1px 2px rgba(34, 53, 46, 0.05),
+    0 10px 28px -14px rgba(34, 53, 46, 0.16);
+  padding: 14px;
+}
+
+.pk-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+/* 图注式面板标题：绿色小方块 + 衬线标题 */
+.pk-fig-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.pk-fig-no {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--pk-primary);
+  background: var(--pk-primary-soft);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.pk-fig-name {
+  font-family: var(--pk-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--pk-ink);
+}
+
+/* 面板右上角的图标工具条 */
+.pk-icon-btn {
+  color: var(--pk-icon);
+  border-radius: 4px;
+}
+
+.pk-icon-btn:hover:not(:disabled) {
+  background: var(--pk-primary-soft);
+  color: var(--pk-primary);
+}
+
+/* 试卷框线铅字按钮：直角 + 描边；未上线 = 虚线框 */
+.pk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s, transform 0.05s;
+}
+
+.pk-btn:focus-visible {
+  outline: 2px solid var(--pk-highlight);
+  outline-offset: 1px;
+}
+
+.pk-btn:disabled {
+  cursor: not-allowed;
+}
+
+.pk-btn-solid {
+  background: var(--pk-primary);
+  border-color: var(--pk-primary);
+  color: #ffffff;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.pk-btn-solid:hover:not(:disabled) {
+  background: var(--pk-primary-hover);
+  border-color: var(--pk-primary-hover);
+}
+
+.pk-btn-solid:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.pk-btn-solid:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.pk-btn-outline {
+  background: var(--pk-panel);
+  border-color: var(--pk-primary);
+  color: var(--pk-primary);
+}
+
+.pk-btn-outline:hover:not(:disabled) {
+  background: var(--pk-primary-soft);
+}
+
+.pk-btn-outline:disabled {
+  opacity: 0.45;
+}
+
+.pk-btn-dashed {
+  background: transparent;
+  border: 1.5px dashed var(--pk-line);
+  color: var(--pk-icon);
+}
+
+.pk-btn-sm {
+  padding: 4px 10px;
+  font-size: 12.5px;
+  gap: 5px;
+}
+
+.pk-btn-block {
+  width: 100%;
+}
+
+/* 荧光笔选中态 */
+.pk-highlighted {
+  background: var(--pk-highlight);
+  color: var(--pk-ink);
+}
+
+/* 键帽小提示（⌘V 等） */
+.pk-kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 5px;
+  border: 1px solid var(--pk-line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--pk-panel);
+  color: var(--pk-ink);
+}
+
+/* 云端识别置信度徽章：≥80% 绿 / <80% 警示红 */
+.pk-confidence {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.pk-conf-good {
+  color: var(--pk-success);
+  background: rgba(58, 153, 112, 0.12);
+}
+
+.pk-conf-warn {
+  color: var(--pk-warn);
+  background: var(--pk-warn-bg);
+}
+
+/* 直尺刻度带：页头之下的签名元素 */
+.pk-ruler {
+  height: 14px;
+  background-color: var(--pk-panel);
+  border-bottom: 1px solid var(--pk-line);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      var(--pk-grid-bold) 0,
+      var(--pk-grid-bold) 1px,
+      transparent 1px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--pk-primary) 0,
+      var(--pk-primary) 1px,
+      transparent 1px,
+      transparent 50px
+    );
+  background-size: auto 6px, auto 12px;
+  background-position: bottom left, bottom left;
+  background-repeat: repeat-x;
+}
+
+/* KaTeX 预览容器随字号缩放 */
+.pk-katex .katex {
+  font-size: 1.15em;
+}
+
+/* 取景器：识别中的对焦呼吸动画 */
+@keyframes pk-focus-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+.pk-focus-ring {
+  animation: pk-focus-breathe 1.2s ease-in-out infinite;
+}
+
+/* 快门反馈：粘贴/拖入成功时闪一下浅绿 */
+.pk-flash {
+  animation: pk-flash-bg 300ms ease-out;
+}
+
+@keyframes pk-flash-bg {
+  0% {
+    background-color: var(--pk-primary-soft);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
