@@ -44,12 +44,13 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2025-01-15',
   /*
-    静态部署：/ 是 routeRules 重定向（generate 时产出 meta-refresh 的 index.html），
-    爬虫不跟随它，所以 /ocr 必须显式列入预渲染路由。
+    静态部署：显式列出全部预渲染路由（含 / 的 meta-refresh 重定向页），
+    不依赖爬虫发现 —— CI 环境（如 Cloudflare Workers Builds）爬虫收敛过早
+    会漏掉路由导致根 index.html 缺失。
   */
   nitro: {
     prerender: {
-      routes: ['/ocr']
+      routes: ['/', '/ocr', '/comment', '/mathlive', '/404.html']
     }
   },
   vite: {

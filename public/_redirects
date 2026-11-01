@@ -1,0 +1,2 @@
+# Cloudflare Workers static assets 原生重定向规则（兜底：/ → /ocr）
+/ /ocr 302
