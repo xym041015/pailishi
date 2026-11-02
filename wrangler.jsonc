@@ -1,10 +1,14 @@
-// Cloudflare Workers 静态资产部署（配合 pnpm run generate 产物 .output/public）
-// 站点完全在浏览器本地运行，无需 SSR worker。
+// Cloudflare Workers 部署配置（静态资产 + 模型代理 Worker）
+// 构建：pnpm run generate → .output/public
+// 模型文件经 /hf/* 由 worker.js 从 hf-mirror 同源转发，见 worker.js 注释
 {
   "name": "pailishi",
+  "main": "worker.js",
   "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./.output/public",
+    "binding": "ASSETS",
     "not_found_handling": "404-page"
   }
 }

@@ -238,11 +238,12 @@ async function handleImage(file: File) {
 
 const loadTestImage = (() => {
   let idx = 0
+  // 绝对路径：页面在 /ocr/ 路由下，相对路径会拼成 /ocr/assets/... 导致 404
   const urls = [
-    'assets/test_img/单行公式.png',
-    'assets/test_img/单行公式2.png',
-    'assets/test_img/多行公式.png',
-    'assets/test_img/多行公式2.jpg'
+    '/assets/test_img/单行公式.png',
+    '/assets/test_img/单行公式2.png',
+    '/assets/test_img/多行公式.png',
+    '/assets/test_img/多行公式2.jpg'
   ]
 
   return async function () {
