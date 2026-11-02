@@ -131,7 +131,12 @@ export default defineNuxtConfig({
       ]
     },
     workbox: {
-      globPatterns: ['**/*.{js,json,css,html,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}'],
+      /*
+        不缓存 html：HTML 每次从网络取最新版，保证引用的带指纹 JS/CSS 与
+        当前部署一致。若缓存旧 HTML，重新部署后其引用的旧指纹 chunk 已被
+        新构建替换（Workers assets 全量替换），请求 404 → 识别失败。
+      */
+      globPatterns: ['**/*.{js,json,css,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}'],
       maximumFileSizeToCacheInBytes: 25 * 1024 * 1024 // 25MB
       // 不添加 runtimeCaching，让 @huggingface/transformers 自己管理模型缓存
     },
