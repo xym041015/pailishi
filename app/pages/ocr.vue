@@ -315,6 +315,9 @@ onMounted(async () => {
         output = cloud.latex
         confidence = cloud.confidence
       } else {
+        if (!isReady.value) {
+          throw new Error('本地模型还在首次下载中（约 80MB，只下载一次），请等顶部进度条完成后重试')
+        }
         let input = file
         if (input.type === 'image/svg+xml') {
           input = await convertSvgToPng(input)
