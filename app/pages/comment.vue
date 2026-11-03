@@ -3,7 +3,7 @@
     <UContainer>
       <p class="text-center m-6">
         <ULink
-          to="https://github.com/alephpi/Texo-web/issues/new/choose"
+          to="https://github.com/xym041015/pailishi/issues/new/choose"
         >
           {{ t('report_issue') }}
         </ULink>

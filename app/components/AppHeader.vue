@@ -34,10 +34,12 @@ const route = useRoute()
           class="w-28 [&>button]:bg-[rgba(255,255,255,0.12)] [&>button]:text-white [&>button]:border-[rgba(255,255,255,0.25)]"
           @update:model-value="setLocale($event as 'en' | 'zh-CN')"
         />
-        <UColorModeButton class="[&>button]:text-white [&>button]:hover:bg-[rgba(255,255,255,0.12)]" />
-        <UTooltip text="Texo (AGPL-3.0) upstream">
+        <UTooltip text="日间 / 夜间模式">
+          <UColorModeButton class="[&>button]:border [&>button]:border-[rgba(246,226,122,0.85)] [&>button]:bg-[rgba(246,226,122,0.16)] [&>button]:text-[var(--pk-highlight,#f6e27a)] [&>button]:hover:bg-[rgba(246,226,122,0.3)]" />
+        </UTooltip>
+        <UTooltip text="GitHub 仓库（AGPL-3.0）">
           <UButton
-            to="https://github.com/alephpi/Texo-web"
+            to="https://github.com/xym041015/pailishi"
             target="_blank"
             icon="i-simple-icons-github"
             aria-label="GitHub"
