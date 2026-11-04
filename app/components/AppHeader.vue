@@ -35,7 +35,13 @@ const route = useRoute()
           @update:model-value="setLocale($event as 'en' | 'zh-CN')"
         />
         <UTooltip text="日间 / 夜间模式">
-          <UColorModeButton class="[&>button]:border [&>button]:border-[rgba(246,226,122,0.85)] [&>button]:bg-[rgba(246,226,122,0.16)] [&>button]:text-[var(--pk-highlight,#f6e27a)] [&>button]:hover:bg-[rgba(246,226,122,0.3)]" />
+          <!--
+            UColorModeButton 根元素就是 button（ClientOnly 不产生包装层，$attrs
+            直接透传），样式必须直接写在组件上；[&>button] 后代选择器匹配不到。
+          -->
+          <UColorModeButton
+            class="rounded-md border border-[rgba(246,226,122,0.85)] bg-[rgba(246,226,122,0.16)] text-[var(--pk-highlight,#f6e27a)] hover:bg-[rgba(246,226,122,0.3)]"
+          />
         </UTooltip>
         <UTooltip text="GitHub 仓库（AGPL-3.0）">
           <UButton
