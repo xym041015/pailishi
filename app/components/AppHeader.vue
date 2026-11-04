@@ -3,6 +3,9 @@ import { en, zh_cn } from '@nuxt/ui/locale'
 
 const { t, locale, setLocale } = useI18n()
 const route = useRoute()
+const colorMode = useColorMode()
+// 按钮显示的是切换目标：夜间模式显示太阳（点击回到白天），日间模式显示月亮
+const isDark = computed(() => colorMode.value === 'dark')
 </script>
 
 <template>
@@ -34,14 +37,20 @@ const route = useRoute()
           class="w-28 [&>button]:bg-[rgba(255,255,255,0.12)] [&>button]:text-white [&>button]:border-[rgba(255,255,255,0.25)]"
           @update:model-value="setLocale($event as 'en' | 'zh-CN')"
         />
-        <UTooltip text="日间 / 夜间模式">
-          <!--
-            UColorModeButton 根元素就是 button（ClientOnly 不产生包装层，$attrs
-            直接透传），样式必须直接写在组件上；[&>button] 后代选择器匹配不到。
-          -->
-          <UColorModeButton
-            class="rounded-md border border-[rgba(246,226,122,0.85)] bg-[rgba(246,226,122,0.16)] text-[var(--pk-highlight,#f6e27a)] hover:bg-[rgba(246,226,122,0.3)]"
-          />
+        <UTooltip :text="isDark ? '切换到日间模式' : '切换到夜间模式'">
+          <ClientOnly>
+            <UButton
+              :icon="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
+              color="neutral"
+              variant="ghost"
+              aria-label="切换日间 / 夜间模式"
+              class="rounded-md border border-[rgba(255,255,255,0.25)] bg-[rgba(255,255,255,0.12)] text-white hover:bg-[rgba(255,255,255,0.2)]"
+              @click="colorMode.preference = isDark ? 'light' : 'dark'"
+            />
+            <template #fallback>
+              <div class="size-8" />
+            </template>
+          </ClientOnly>
         </UTooltip>
         <UTooltip text="GitHub 仓库（AGPL-3.0）">
           <UButton
