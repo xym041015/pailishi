@@ -104,7 +104,10 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'zh-CN',
     langDir: 'locales',
-    strategy: 'no_prefix'
+    strategy: 'no_prefix',
+    // 关闭浏览器语言探测：目标用户为中文，避免被浏览器语言（如英文系统）
+    // 带偏成英文界面；英文只在用户手动切换时使用
+    detectBrowserLanguage: false
   },
   pwa: {
     registerType: 'autoUpdate',
