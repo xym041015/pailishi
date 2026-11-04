@@ -465,6 +465,8 @@ onBeforeUnmount(() => {
 
     <ScreenshotGuideModal v-model:open="showGuide" />
 
+    <FirstVisitGuide />
+
     <SettingsDrawer
       v-model:open="showSettings"
       :settings="engineSettings"

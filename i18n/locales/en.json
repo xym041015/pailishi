@@ -141,5 +141,7 @@
   "recognizing": "Recognizing...",
   "recognize_success": "Recognition succeed",
   "recognize_failed": "Recognition failed",
-  "unknown_error": "Unknown error, please check console log"
+  "unknown_error": "Unknown error, please check console log",
+  "guide_nav": "Guide",
+  "guide_empty_link": "New here? 30-second guide"
 }

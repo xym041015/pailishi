@@ -50,7 +50,7 @@ export default defineNuxtConfig({
   */
   nitro: {
     prerender: {
-      routes: ['/', '/ocr', '/comment', '/mathlive', '/404.html']
+      routes: ['/', '/ocr', '/guide', '/comment', '/mathlive', '/404.html']
     }
   },
   vite: {

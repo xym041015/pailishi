@@ -2,6 +2,7 @@
 import { en, zh_cn } from '@nuxt/ui/locale'
 
 const { t, locale, setLocale } = useI18n()
+const route = useRoute()
 const colorMode = useColorMode()
 // 按钮显示的是切换目标：夜间模式显示太阳（点击回到白天），日间模式显示月亮
 const isDark = computed(() => colorMode.value === 'dark')
@@ -22,6 +23,13 @@ const isDark = computed(() => colorMode.value === 'dark')
       </NuxtLink>
 
       <div class="flex shrink-0 items-center gap-2">
+        <NuxtLink
+          to="/guide"
+          class="rounded-md px-3 py-1.5 text-sm"
+          :class="route.path.startsWith('/guide') ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
+        >
+          {{ t('guide_nav') }}
+        </NuxtLink>
         <ULocaleSelect
           v-model="locale"
           :locales="[zh_cn, en]"

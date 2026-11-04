@@ -52,6 +52,12 @@
           />
           {{ t('upload_example') }}
         </button>
+        <NuxtLink
+          to="/guide"
+          class="text-xs text-[var(--pk-muted)] underline decoration-dotted underline-offset-4 hover:text-[var(--pk-primary)]"
+        >
+          {{ t('guide_empty_link') }}
+        </NuxtLink>
       </div>
 
       <p
