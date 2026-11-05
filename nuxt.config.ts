@@ -38,6 +38,13 @@ export default defineNuxtConfig({
     fonts: false
   },
 
+  experimental: {
+    // 关闭 app manifest：它会在运行时拉 /_nuxt/builds/meta/<构建ID>.json，
+    // 纯静态站每次重新部署后，旧标签页要的是旧构建的元数据 → 404 → 整页报错。
+    // 本站没有客户端 routeRules，也不需要过期构建检查，此机制纯属有害。
+    appManifest: false
+  },
+
   compatibilityDate: '2025-01-15',
   /*
     静态部署：显式列出全部预渲染路由（含 / 的 meta-refresh 重定向页），
