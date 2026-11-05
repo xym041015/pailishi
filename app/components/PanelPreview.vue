@@ -76,6 +76,7 @@
       >
         <div
           v-if="code"
+          ref="katexHost"
           class="pk-katex w-fit min-w-full overflow-x-auto py-4 text-center"
           v-html="rendered"
         />
@@ -117,6 +118,10 @@ import katex from 'katex'
 const props = defineProps<{
   code: string
   fontSize: number
+  // 带 \htmlData{seg=N} 标记的渲染源码（源码选区↔预览高亮联动，见 utils/latexSegments.ts）
+  wrappedCode?: string
+  // 当前选区命中的 seg 编号列表
+  highlightSegs?: number[]
 }>()
 
 const emit = defineEmits<{
@@ -131,6 +136,7 @@ const { t } = useI18n()
 
 const tab = ref<'katex' | 'mathlive'>('katex')
 const previewRef = ref<HTMLElement | null>(null)
+const katexHost = ref<HTMLElement | null>(null)
 
 const previewTabs = [
   { label: 'KaTeX', value: 'katex' },
@@ -138,12 +144,30 @@ const previewTabs = [
 ]
 
 const rendered = computed(() => {
-  if (!props.code) return ''
-  return katex.renderToString(props.code, {
+  const src = props.wrappedCode || props.code
+  if (!src) return ''
+  return katex.renderToString(src, {
     throwOnError: false,
-    displayMode: true
+    displayMode: true,
+    // \htmlData 仅用于高亮联动打标记，不放开其他信任项
+    trust: context => context.command === '\\htmlData',
+    strict: 'ignore'
   })
 })
+
+// 源码选区变化时，给预览里对应 data-seg 片段加/去荧光笔高亮
+watch(
+  () => [props.highlightSegs, rendered.value],
+  () => {
+    const host = katexHost.value
+    if (!host) return
+    const hl = props.highlightSegs ?? []
+    host.querySelectorAll<HTMLElement>('[data-seg]').forEach((el) => {
+      el.classList.toggle('pk-seg-hl', hl.includes(Number(el.dataset.seg)))
+    })
+  },
+  { flush: 'post', immediate: true }
+)
 
 const errorMessage = computed(() => {
   if (!props.code) return ''

@@ -118,6 +118,9 @@
         :ui="{ base: 'h-full resize-none leading-relaxed' }"
         :style="{ fontSize: `${fontSize}px` }"
         @update:model-value="$emit('update:code', $event as string)"
+        @select="reportSelection"
+        @mouseup="reportSelection"
+        @keyup="reportSelection"
       />
     </div>
 
@@ -193,7 +196,7 @@ defineProps<{
   confidence: number | null
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   'update:code': [value: string]
   'update:autoCopy': [value: AutoCopyMode]
   'copy-word': []
@@ -205,9 +208,17 @@ defineEmits<{
   'undo': []
   'redo': []
   'help': []
+  'select-range': [start: number, end: number]
 }>()
 
 const { t } = useI18n()
+
+// 上报源码选区（预览面板据此高亮对应片段）
+function reportSelection(e: Event) {
+  const el = e.target as HTMLTextAreaElement
+  if (el.tagName !== 'TEXTAREA') return
+  emit('select-range', el.selectionStart ?? 0, el.selectionEnd ?? 0)
+}
 
 const autoCopyItems = computed(() => [
   { label: t('auto_copy_off'), value: 'off' },

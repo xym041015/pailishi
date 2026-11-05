@@ -9,6 +9,7 @@ import {
   getActiveCloudProvider,
   recognizeWithProvider
 } from '../utils/cloudOCR'
+import { buildLatexPreview, segsForRange } from '../utils/latexSegments'
 
 type AutoCopyMode = 'off' | 'latex' | 'mathml'
 
@@ -43,6 +44,24 @@ const autoCopy = ref<AutoCopyMode>('latex')
 const fileInput = ref<HTMLInputElement | null>(null)
 
 const hasWork = computed(() => !!imageFile.value || !!latexCode.value)
+
+// 源码选区 ↔ 预览高亮联动：把源码切段打 seg 标记，选中时算命中片段
+const sourceSel = ref<{ start: number, end: number } | null>(null)
+const previewBuild = computed(() => buildLatexPreview(latexCode.value))
+const previewCode = computed(() => previewBuild.value.wrapped)
+const activeSegs = computed(() => {
+  const sel = sourceSel.value
+  if (!sel || sel.end <= sel.start) return [] as number[]
+  return segsForRange(previewBuild.value.units, sel.start, sel.end)
+})
+
+function onSourceSelect(start: number, end: number) {
+  sourceSel.value = { start, end }
+}
+
+watch(latexCode, () => {
+  sourceSel.value = null
+})
 
 const warning = computed(() => {
   if (!imageDims.value) return null
@@ -393,6 +412,8 @@ onBeforeUnmount(() => {
       <PanelPreview
         class="min-w-0 md:col-start-1 md:row-start-2 xl:col-start-3 xl:row-start-1"
         :code="latexCode"
+        :wrapped-code="previewCode"
+        :highlight-segs="activeSegs"
         :font-size="previewFont"
         @update:code="latexCode = $event"
         @font-plus="previewFont = Math.min(28, previewFont + 2)"
@@ -419,6 +440,7 @@ onBeforeUnmount(() => {
         @undo="undo"
         @redo="redo"
         @help="showHelp = true"
+        @select-range="onSourceSelect"
       />
     </div>
 

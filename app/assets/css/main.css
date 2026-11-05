@@ -360,3 +360,14 @@ body {
     background-color: transparent;
   }
 }
+
+/* 源码选区 ↔ 预览高亮：选中的源码片段对应的公式部分铺荧光笔黄 */
+.pk-seg-hl {
+  background: rgba(246, 226, 122, 0.55);
+  border-radius: 3px;
+  transition: background 0.12s ease;
+}
+
+.dark .pk-seg-hl {
+  background: rgba(246, 226, 122, 0.26);
+}
