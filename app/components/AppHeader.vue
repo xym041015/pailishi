@@ -19,27 +19,28 @@ const isDark = computed(() => colorMode.value === 'dark')
           chalk
           class="h-8 w-8 shrink-0"
         />
-        <span class="pk-serif text-xl font-bold tracking-wide text-white">{{ t('appName') }}</span>
+        <!-- 手机端只留 logo 方块：窄屏放不下品牌字（会被挤成竖排/叠到导航上） -->
+        <span class="pk-serif hidden text-xl font-bold tracking-wide text-white sm:inline">{{ t('appName') }}</span>
       </NuxtLink>
 
-      <div class="flex shrink-0 items-center gap-2">
+      <div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
         <NuxtLink
           to="/"
-          class="rounded-md px-3 py-1.5 text-sm"
+          class="rounded-md px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"
           :class="route.path === '/' ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
         >
           {{ t('nav_home') }}
         </NuxtLink>
         <NuxtLink
           to="/ocr"
-          class="rounded-md px-3 py-1.5 text-sm"
+          class="rounded-md px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"
           :class="route.path.startsWith('/ocr') ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
         >
           {{ t('home_nav_workspace') }}
         </NuxtLink>
         <NuxtLink
           to="/guide"
-          class="rounded-md px-3 py-1.5 text-sm"
+          class="rounded-md px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"
           :class="route.path.startsWith('/guide') ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
         >
           {{ t('guide_nav') }}
@@ -48,7 +49,7 @@ const isDark = computed(() => colorMode.value === 'dark')
           v-model="locale"
           :locales="[zh_cn, en]"
           size="xs"
-          class="w-28 [&>button]:bg-[rgba(255,255,255,0.12)] [&>button]:text-white [&>button]:border-[rgba(255,255,255,0.25)]"
+          class="w-24 sm:w-28 [&>button]:bg-[rgba(255,255,255,0.12)] [&>button]:text-white [&>button]:border-[rgba(255,255,255,0.25)]"
           @update:model-value="setLocale($event as 'en' | 'zh-CN')"
         />
         <UTooltip :text="isDark ? '切换到日间模式' : '切换到夜间模式'">
@@ -66,7 +67,10 @@ const isDark = computed(() => colorMode.value === 'dark')
             </template>
           </ClientOnly>
         </UTooltip>
-        <UTooltip text="GitHub 仓库（AGPL-3.0）">
+        <UTooltip
+          text="GitHub 仓库（AGPL-3.0）"
+          class="hidden sm:inline-flex"
+        >
           <UButton
             to="https://github.com/xym041015/pailishi"
             target="_blank"
