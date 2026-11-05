@@ -45,10 +45,6 @@ useSeoMeta({
 
     <div class="flex h-screen flex-col overflow-hidden">
       <AppHeader />
-      <div
-        class="pk-ruler relative z-10"
-        aria-hidden="true"
-      />
       <main class="relative z-10 flex min-h-0 flex-1 flex-col overflow-y-auto lg:overflow-hidden">
         <NuxtPage />
       </main>
