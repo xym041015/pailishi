@@ -140,8 +140,21 @@ export default defineNuxtConfig({
         新构建替换（Workers assets 全量替换），请求 404 → 识别失败。
       */
       globPatterns: ['**/*.{js,json,css,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}'],
-      maximumFileSizeToCacheInBytes: 25 * 1024 * 1024 // 25MB
-      // 不添加 runtimeCaching，让 @huggingface/transformers 自己管理模型缓存
+      maximumFileSizeToCacheInBytes: 25 * 1024 * 1024, // 25MB
+      runtimeCaching: [
+        {
+          // 语言包（_i18n/ 下内容寻址的 JSON）缓存优先：首次加载成功后走本地缓存，
+          // 网络抖动也不会再把整站文案打回裸键名（i18n v10 语言包是运行时懒加载的）
+          urlPattern: /\/_i18n\//,
+          handler: 'CacheFirst',
+          method: 'GET',
+          options: {
+            cacheName: 'i18n-messages',
+            expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 }
+          }
+        }
+      ]
+      // 其余请求不添加 runtimeCaching，让 @huggingface/transformers 自己管理模型缓存
     },
     client: {
       installPrompt: true,
