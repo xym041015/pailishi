@@ -1,6 +1,8 @@
 <script setup lang="ts">
-// 产品首页：SimpleTex 式「介绍页 + 功能栏」结构（模块 7）。
-// 只展示真实状态——未上线功能虚线占位标「开发中」，不做假按钮。
+import katex from 'katex'
+
+// 产品首页 v2：参考 simpletex.cn 的门面结构——渐变 Hero + 产品仿样浮窗 + 白底圆角卡片区。
+// 皮肤仍是拍立式自有体系（墨蓝 / 宋体 / 荧光黄），Hero 里的工作台是 HTML/CSS 仿样（真 KaTeX 渲染）。
 useSeoMeta({
   title: '拍立式 SnapLaTeX — 拍下来，粘进 Word 就能改',
   description: '免费公式识别工具：截图转 LaTeX，粘进 Word 就是可编辑原生公式。无需登录，识别在浏览器本地完成，图片不上传。'
@@ -8,15 +10,18 @@ useSeoMeta({
 
 const { t } = useI18n()
 
-const readyFeats = computed(() => [
-  { name: t('home_feat1_name'), desc: t('home_feat1_desc'), to: '/ocr' },
-  { name: t('home_feat2_name'), desc: t('home_feat2_desc'), to: '/guide' }
-])
+const DEMO_LATEX = '2^{2^{\\operatorname*{lim}_{n\\rightarrow\\infty}\\left({\\frac{1}{2}}\\right)^{n}}90^{\\circ}f|_{x=1}}'
 
-const wipFeats = computed(() => [
-  { name: t('home_feat3_name'), desc: t('home_feat3_desc') },
-  { name: t('home_feat4_name'), desc: t('home_feat4_desc') },
-  { name: t('home_feat5_name'), desc: t('home_feat5_desc') }
+const demoRendered = computed(() =>
+  katex.renderToString(DEMO_LATEX, { throwOnError: false, displayMode: true })
+)
+
+const feats = computed(() => [
+  { icon: 'i-lucide-camera', name: t('home_feat1_name'), desc: t('home_feat1_desc'), to: '/ocr', wip: false },
+  { icon: 'i-lucide-graduation-cap', name: t('home_feat2_name'), desc: t('home_feat2_desc'), to: '/guide', wip: false },
+  { icon: 'i-lucide-pencil-line', name: t('home_feat3_name'), desc: t('home_feat3_desc'), wip: true },
+  { icon: 'i-lucide-history', name: t('home_feat4_name'), desc: t('home_feat4_desc'), wip: true },
+  { icon: 'i-lucide-image-down', name: t('home_feat5_name'), desc: t('home_feat5_desc'), wip: true }
 ])
 
 const captures = computed(() => [
@@ -33,155 +38,251 @@ const steps = computed(() => [
 </script>
 
 <template>
-  <div class="pk-home relative z-10 mx-auto h-full w-full max-w-[1100px] overflow-y-auto px-4 pb-10">
-    <!-- 1. 功能栏：课程表式横条，已上线实线可点，未上线虚线占位 -->
-    <section class="mt-5">
-      <div class="pk-schedule-wrap overflow-x-auto rounded-md border border-[var(--pk-line)] shadow-sm">
-        <div class="pk-schedule flex min-w-[680px] bg-[var(--pk-panel)]">
-          <div class="pk-schedule__label hidden w-9 shrink-0 items-center justify-center border-r border-[var(--pk-line)] bg-[var(--pk-board)] sm:flex">
-            <span class="pk-serif text-xs tracking-[0.3em] text-white [writing-mode:vertical-rl]">{{ t('home_schedule') }}</span>
+  <div class="pk-home h-full overflow-y-auto">
+    <!-- 1. Hero：墨蓝渐变整幅 + 左文案右产品仿样 -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-[#1e3a5f] via-[#2b5c8f] to-[#3a6ea5]">
+      <span
+        class="pk-serif pointer-events-none absolute -right-8 top-4 select-none text-[280px] italic leading-none text-white/5"
+        aria-hidden="true"
+      >Σ</span>
+      <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 sm:py-20 lg:grid-cols-2 lg:py-24">
+        <div class="text-center lg:text-left">
+          <p class="pk-serif text-5xl font-bold tracking-wide text-white drop-shadow-md sm:text-6xl">
+            {{ t('appName') }}
+          </p>
+          <p class="pk-serif mt-4 text-xl font-semibold text-white/90 sm:text-2xl">
+            {{ t('slogan') }}
+          </p>
+          <p class="mx-auto mt-5 max-w-[460px] text-sm leading-7 text-white/70 lg:mx-0">
+            {{ t('home_hero_desc') }}
+          </p>
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            <NuxtLink
+              to="/ocr"
+              class="rounded-full bg-white px-8 py-3 text-base font-semibold text-[#1f3d5c] shadow-lg transition-transform hover:scale-[1.03]"
+            >
+              {{ t('home_cta_try') }}
+            </NuxtLink>
+            <NuxtLink
+              to="/guide"
+              class="rounded-full border border-white/40 bg-white/10 px-8 py-3 text-base font-medium text-white transition-colors hover:bg-white/20"
+            >
+              {{ t('home_cta_guide') }}
+            </NuxtLink>
           </div>
-          <NuxtLink
-            v-for="(feat, i) in readyFeats"
+        </div>
+
+        <!-- 工作台仿样：三迷你栏，真 KaTeX 渲染 -->
+        <div class="mx-auto w-full max-w-[540px]">
+          <div class="overflow-hidden rounded-xl bg-[var(--pk-panel)] shadow-2xl ring-1 ring-white/20">
+            <div class="flex h-8 items-center gap-1.5 border-b border-[var(--pk-line)] bg-[#eef1f5] px-3">
+              <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+              <span class="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+              <span class="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+              <span class="ml-2 flex-1 truncate rounded bg-white px-2 py-0.5 text-center text-[9px] text-[var(--pk-muted)]">
+                snaplatex.cn/ocr
+              </span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 p-3">
+              <div class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] p-2">
+                <span class="pk-fig-no">1</span>
+                <div class="relative mt-1.5 flex h-24 items-center justify-center overflow-hidden rounded bg-white p-1">
+                  <ViewfinderCorners :active="false" />
+                  <img
+                    src="/assets/test_img/单行公式.png"
+                    alt=""
+                    class="max-h-full max-w-full object-contain"
+                  >
+                </div>
+              </div>
+              <div class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] p-2">
+                <span class="pk-fig-no">2</span>
+                <p class="mt-1.5 h-24 overflow-hidden break-all rounded bg-white p-1.5 font-mono text-[7px] leading-[11px] text-[var(--pk-ink)]">
+                  {{ DEMO_LATEX }}
+                </p>
+              </div>
+              <div class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] p-2">
+                <span class="pk-fig-no">3</span>
+                <div
+                  class="pk-katex mt-1.5 flex h-24 items-center justify-center overflow-hidden rounded bg-white"
+                  :style="{ fontSize: '9px' }"
+                  v-html="demoRendered"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 功能栏：五张圆角功能卡 -->
+    <section class="bg-[var(--pk-panel)] py-16">
+      <div class="mx-auto max-w-6xl px-6">
+        <div class="text-center">
+          <h2 class="pk-serif text-2xl font-bold text-[var(--pk-ink)]">
+            {{ t('home_schedule') }}
+          </h2>
+        </div>
+        <div class="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          <template
+            v-for="feat in feats"
             :key="feat.name"
-            :to="feat.to"
-            class="pk-schedule__cell pk-schedule__cell--ready flex-1"
           >
-            <span class="flex items-center justify-between gap-1">
-              <span class="pk-fig-no">{{ i + 1 }}</span>
-              <span class="pk-schedule__status pk-schedule__status--ready">{{ t('home_status_ready') }}</span>
-            </span>
-            <span class="pk-serif mt-1.5 block text-sm font-bold text-[var(--pk-ink)]">{{ feat.name }}</span>
-            <span class="mt-1 block text-xs leading-5 text-[var(--pk-muted)]">{{ feat.desc }}</span>
-          </NuxtLink>
+            <NuxtLink
+              v-if="!feat.wip"
+              :to="feat.to!"
+              class="group rounded-2xl border border-[var(--pk-line)] bg-[var(--pk-page)] p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-[var(--pk-primary)] hover:shadow-md"
+            >
+              <div class="flex items-start justify-between">
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--pk-primary-soft)]">
+                  <UIcon
+                    :name="feat.icon"
+                    class="h-5 w-5 text-[var(--pk-primary)]"
+                  />
+                </span>
+                <span class="rounded-full bg-[var(--pk-primary)] px-2 py-0.5 text-[10px] text-white">
+                  {{ t('home_status_ready') }}
+                </span>
+              </div>
+              <p class="pk-serif mt-3 text-base font-bold text-[var(--pk-ink)]">
+                {{ feat.name }}
+              </p>
+              <p class="mt-1 text-xs leading-5 text-[var(--pk-muted)]">
+                {{ feat.desc }}
+              </p>
+            </NuxtLink>
+            <div
+              v-else
+              class="rounded-2xl border border-dashed border-[var(--pk-line)] p-5 opacity-80"
+              :title="t('home_status_wip')"
+            >
+              <div class="flex items-start justify-between">
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--pk-edit-bg)]">
+                  <UIcon
+                    :name="feat.icon"
+                    class="h-5 w-5 text-[var(--pk-icon)]"
+                  />
+                </span>
+                <span class="rounded-full bg-[var(--pk-edit-bg)] px-2 py-0.5 text-[10px] text-[var(--pk-muted)]">
+                  {{ t('home_status_wip') }}
+                </span>
+              </div>
+              <p class="pk-serif mt-3 text-base font-bold text-[var(--pk-ink)]">
+                {{ feat.name }}
+              </p>
+              <p class="mt-1 text-xs leading-5 text-[var(--pk-muted)]">
+                {{ feat.desc }}
+              </p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 能拍什么 -->
+    <section class="bg-[var(--pk-page)] py-16">
+      <div class="mx-auto max-w-6xl px-6">
+        <div class="text-center">
+          <h2 class="pk-serif text-2xl font-bold text-[var(--pk-ink)]">
+            {{ t('home_capture_eyebrow') }}
+          </h2>
+        </div>
+        <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
           <div
-            v-for="(feat, i) in wipFeats"
-            :key="feat.name"
-            class="pk-schedule__cell pk-schedule__cell--wip flex-1"
-            :title="t('home_status_wip')"
+            v-for="cap in captures"
+            :key="cap.name"
+            class="rounded-xl border border-[var(--pk-line)] bg-[var(--pk-panel)] p-3 shadow-sm"
           >
-            <span class="flex items-center justify-between gap-1">
-              <span class="pk-fig-no">{{ readyFeats.length + i + 1 }}</span>
-              <span class="pk-schedule__status pk-schedule__status--wip">{{ t('home_status_wip') }}</span>
-            </span>
-            <span class="pk-serif mt-1.5 block text-sm font-bold text-[var(--pk-ink)]">{{ feat.name }}</span>
-            <span class="mt-1 block text-xs leading-5 text-[var(--pk-muted)]">{{ feat.desc }}</span>
+            <img
+              :src="cap.img"
+              :alt="cap.name"
+              class="h-32 w-full rounded-lg bg-white object-contain p-2"
+              loading="lazy"
+            >
+            <p class="pk-serif mt-2.5 text-center text-sm font-semibold text-[var(--pk-ink)]">
+              {{ cap.name }}
+            </p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. Hero：slogan 大标题 + 差异点 + 双 CTA -->
-    <section class="mx-auto mt-14 max-w-[760px] text-center">
-      <h1 class="pk-serif text-3xl font-bold leading-snug tracking-wide text-[var(--pk-ink)] sm:text-4xl">
-        {{ t('slogan') }}
-      </h1>
-      <p class="mt-4 text-sm leading-6 text-[var(--pk-muted)]">
-        {{ t('home_hero_points') }}
-      </p>
-      <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-        <NuxtLink
-          to="/ocr"
-          class="pk-btn pk-btn-solid"
-        >
-          {{ t('home_cta_workspace') }}
-        </NuxtLink>
-        <NuxtLink
-          to="/guide"
-          class="pk-btn pk-btn-outline"
-        >
-          {{ t('home_cta_guide') }}
-        </NuxtLink>
-      </div>
-    </section>
-
-    <!-- 3. 能拍什么：真实识别素材 -->
-    <section class="mt-14">
-      <span class="pk-fig-no">{{ t('home_capture_eyebrow') }}</span>
-      <div class="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div
-          v-for="cap in captures"
-          :key="cap.name"
-          class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-panel)] p-3"
-        >
-          <img
-            :src="cap.img"
-            :alt="cap.name"
-            class="h-24 w-full rounded bg-[var(--pk-edit-bg)] object-contain p-2"
-            loading="lazy"
-          >
-          <p class="pk-serif mt-2 text-center text-sm font-semibold text-[var(--pk-ink)]">
-            {{ cap.name }}
-          </p>
-        </div>
-        <div class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-panel)] p-3">
-          <div class="flex h-24 w-full items-center justify-center rounded bg-[var(--pk-edit-bg)]">
-            <UIcon
-              name="i-lucide-pencil-line"
-              class="h-9 w-9 text-[var(--pk-icon)]"
-            />
+          <div class="rounded-xl border border-dashed border-[var(--pk-line)] p-3">
+            <div class="flex h-32 w-full items-center justify-center rounded-lg bg-[var(--pk-edit-bg)]">
+              <UIcon
+                name="i-lucide-pencil-line"
+                class="h-10 w-10 text-[var(--pk-icon)]"
+              />
+            </div>
+            <p class="pk-serif mt-2.5 text-center text-sm font-semibold text-[var(--pk-ink)]">
+              {{ t('home_capture4') }}
+            </p>
+            <p class="mt-0.5 text-center text-[10px] leading-4 text-[var(--pk-muted)]">
+              {{ t('home_capture_note') }}
+            </p>
           </div>
-          <p class="pk-serif mt-2 text-center text-sm font-semibold text-[var(--pk-ink)]">
-            {{ t('home_capture4') }}
-          </p>
-          <p class="mt-0.5 text-center text-[10px] leading-4 text-[var(--pk-muted)]">
-            {{ t('home_capture_note') }}
-          </p>
         </div>
       </div>
     </section>
 
     <!-- 4. 三步上手 -->
-    <section class="mt-14">
-      <span class="pk-fig-no">{{ t('home_steps_eyebrow') }}</span>
-      <div class="mt-3 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-1">
-        <template
-          v-for="(step, i) in steps"
-          :key="step.name"
-        >
-          <div class="flex-1 rounded-md border border-[var(--pk-line)] bg-[var(--pk-panel)] p-4">
-            <span class="pk-fig-no">{{ i + 1 }}</span>
-            <p class="pk-serif mt-1.5 text-sm font-bold text-[var(--pk-ink)]">
-              {{ step.name }}
-            </p>
-            <p class="mt-1 text-xs leading-5 text-[var(--pk-muted)]">
-              {{ step.desc }}
-            </p>
+    <section class="bg-[var(--pk-panel)] py-16">
+      <div class="mx-auto max-w-5xl px-6">
+        <div class="text-center">
+          <h2 class="pk-serif text-2xl font-bold text-[var(--pk-ink)]">
+            {{ t('home_steps_eyebrow') }}
+          </h2>
+        </div>
+        <div class="relative mt-10">
+          <div
+            class="absolute left-[17%] right-[17%] top-5 hidden border-t-2 border-dashed border-[var(--pk-line)] md:block"
+            aria-hidden="true"
+          />
+          <div class="grid gap-8 md:grid-cols-3">
+            <div
+              v-for="(step, i) in steps"
+              :key="step.name"
+              class="relative text-center"
+            >
+              <span class="relative z-10 mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--pk-primary)] text-base font-bold text-white shadow-md">
+                {{ i + 1 }}
+              </span>
+              <p class="pk-serif mt-3 text-base font-bold text-[var(--pk-ink)]">
+                {{ step.name }}
+              </p>
+              <p class="mt-1 text-xs leading-5 text-[var(--pk-muted)]">
+                {{ step.desc }}
+              </p>
+            </div>
           </div>
-          <span
-            v-if="i < steps.length - 1"
-            class="hidden px-1 text-center text-lg text-[var(--pk-muted)] sm:block"
+        </div>
+        <div class="mt-8 text-center">
+          <NuxtLink
+            to="/guide"
+            class="text-sm text-[var(--pk-muted)] underline decoration-dotted underline-offset-4 hover:text-[var(--pk-primary)]"
           >
-            →
-          </span>
-        </template>
-      </div>
-      <div class="mt-3 text-center">
-        <NuxtLink
-          to="/guide"
-          class="text-xs text-[var(--pk-muted)] underline decoration-dotted underline-offset-4 hover:text-[var(--pk-primary)]"
-        >
-          {{ t('home_steps_link') }}
-        </NuxtLink>
+            {{ t('home_steps_link') }}
+          </NuxtLink>
+        </div>
       </div>
     </section>
 
     <!-- 5. 关于 -->
-    <section class="mt-14">
-      <span class="pk-fig-no">{{ t('home_about_eyebrow') }}</span>
-      <p class="mt-3 max-w-[720px] text-sm leading-7 text-[var(--pk-ink)]">
-        {{ t('home_about_body') }}
-      </p>
+    <section class="bg-[var(--pk-page)] py-14">
+      <div class="mx-auto max-w-2xl px-6 text-center">
+        <h2 class="pk-serif text-2xl font-bold text-[var(--pk-ink)]">
+          {{ t('home_about_eyebrow') }}
+        </h2>
+        <p class="mt-4 text-sm leading-7 text-[var(--pk-ink)]">
+          {{ t('home_about_body') }}
+        </p>
+      </div>
     </section>
 
     <!-- 6. 页脚（备案号行：ICP 备案通过后在此渲染，链接 https://beian.miit.gov.cn/） -->
-    <footer class="mt-14 border-t border-[var(--pk-line)] pt-5 text-center text-xs text-[var(--pk-muted)]">
+    <footer class="bg-[#1f3d5c] py-6 text-center text-xs text-white/60">
       <p>{{ t('footer_brand') }}</p>
       <a
         href="https://github.com/xym041015/pailishi"
         target="_blank"
         rel="noopener"
-        class="mt-1 inline-flex items-center gap-1 hover:text-[var(--pk-primary)]"
+        class="mt-1 inline-flex items-center gap-1 text-white/70 hover:text-white"
       >
         <UIcon
           name="i-simple-icons-github"
@@ -194,55 +295,11 @@ const steps = computed(() => [
 </template>
 
 <style scoped>
-/* 课程表功能栏：格子间共用边线，已上线格 hover 抬起；未上线格铺斜纹（像试卷装订线阴影） */
-.pk-schedule__cell {
-  border-left: 1px solid var(--pk-line);
-  display: block;
-  padding: 12px 14px;
+/* 首页用干净的实底（工作台才有方格纸纹理），滚动容器随 app 壳 */
+.pk-home {
+  background: var(--pk-page);
 }
 
-.pk-schedule__cell:first-child,
-.pk-schedule__label + .pk-schedule__cell {
-  border-left: 0;
-}
-
-.pk-schedule__cell--ready {
-  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.pk-schedule__cell--ready:hover {
-  background: var(--pk-primary-soft);
-  box-shadow: inset 0 -2px 0 var(--pk-primary);
-  transform: translateY(-2px);
-}
-
-.pk-schedule__cell--wip {
-  background:
-    repeating-linear-gradient(
-      -45deg,
-      transparent 0,
-      transparent 6px,
-      var(--pk-primary-soft) 6px,
-      var(--pk-primary-soft) 7px
-    );
-  cursor: default;
-}
-
-.pk-schedule__status {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-}
-
-.pk-schedule__status--ready {
-  color: var(--pk-primary);
-}
-
-.pk-schedule__status--wip {
-  color: var(--pk-muted);
-}
-
-/* 页面滚动容器 */
 .pk-home::-webkit-scrollbar {
   width: 8px;
 }
