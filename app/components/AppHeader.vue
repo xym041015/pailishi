@@ -24,6 +24,13 @@ const isDark = computed(() => colorMode.value === 'dark')
 
       <div class="flex shrink-0 items-center gap-2">
         <NuxtLink
+          to="/"
+          class="rounded-md px-3 py-1.5 text-sm"
+          :class="route.path === '/' ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
+        >
+          {{ t('nav_home') }}
+        </NuxtLink>
+        <NuxtLink
           to="/ocr"
           class="rounded-md px-3 py-1.5 text-sm"
           :class="route.path.startsWith('/ocr') ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
