@@ -99,7 +99,7 @@
         </div>
       </div>
       <div
-        v-show="tab === 'mathlive'"
+        v-if="tab === 'mathlive'"
         class="w-full min-w-[320px]"
       >
         <VMathfield
@@ -137,6 +137,10 @@ const { t } = useI18n()
 const tab = ref<'katex' | 'mathlive'>('katex')
 const previewRef = ref<HTMLElement | null>(null)
 const katexHost = ref<HTMLElement | null>(null)
+
+// Mathlive 体积较大（~0.8MB）且默认标签页用不到：异步加载，
+// 首次切到 Mathlive 标签页才下载，缩短工作台首屏加载时间
+const VMathfield = defineAsyncComponent(() => import('./VMathfield.vue'))
 
 const previewTabs = [
   { label: 'KaTeX', value: 'katex' },
