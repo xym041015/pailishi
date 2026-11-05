@@ -38,10 +38,6 @@ export default defineNuxtConfig({
     fonts: false
   },
 
-  routeRules: {
-    '/': { redirect: { to: '/ocr', statusCode: 302 } }
-  },
-
   compatibilityDate: '2025-01-15',
   /*
     静态部署：显式列出全部预渲染路由（含 / 的 meta-refresh 重定向页），

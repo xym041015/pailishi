@@ -12,7 +12,7 @@ const isDark = computed(() => colorMode.value === 'dark')
   <header class="sticky top-0 z-50 border-b border-[rgba(0,0,0,0.28)] bg-[var(--pk-board)]">
     <div class="mx-auto flex h-14 max-w-[1500px] items-center justify-between gap-4 px-4">
       <NuxtLink
-        to="/ocr"
+        to="/"
         class="flex min-w-0 items-center gap-2.5"
       >
         <BrandLogo
@@ -23,6 +23,13 @@ const isDark = computed(() => colorMode.value === 'dark')
       </NuxtLink>
 
       <div class="flex shrink-0 items-center gap-2">
+        <NuxtLink
+          to="/ocr"
+          class="rounded-md px-3 py-1.5 text-sm"
+          :class="route.path.startsWith('/ocr') ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
+        >
+          {{ t('home_nav_workspace') }}
+        </NuxtLink>
         <NuxtLink
           to="/guide"
           class="rounded-md px-3 py-1.5 text-sm"
