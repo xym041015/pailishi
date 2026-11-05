@@ -366,7 +366,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="relative z-10 mx-auto flex min-h-full w-full max-w-[1500px] flex-col px-4 pb-24 pt-4 md:pb-4">
+  <div class="relative z-10 mx-auto flex min-h-full w-full max-w-[1500px] flex-col px-4 pb-24 md:pb-4">
     <InputBand
       class="mb-5"
       :has-image="!!imageFile"

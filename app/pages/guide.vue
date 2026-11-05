@@ -6,7 +6,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="pk-guide relative z-10 mx-auto h-full w-full max-w-[1100px] overflow-y-auto px-4 pb-16 pt-6">
+  <div class="pk-guide relative z-10 mx-auto h-full w-full max-w-[1100px] overflow-y-auto px-4 pb-16">
     <!-- 页首： eyebrow + 宋体大标题 -->
     <header class="mx-auto max-w-[760px] text-center">
       <span class="pk-fig-no">使用教程</span>
