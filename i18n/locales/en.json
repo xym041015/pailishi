@@ -176,7 +176,7 @@
   "home_step3_desc": "Click “Copy as Word equation”, paste in Word",
   "home_steps_link": "Full guide",
   "home_about_eyebrow": "About",
-  "home_about_body": "SnapLaTeX is a free tool built by a trainee middle-school math teacher: it turns formula screenshots into editable native Word equations, not images. Recognition runs entirely in your browser — images never leave your device. The whole site is AGPL-3.0 open source.",
+  "home_about_body": "SnapLaTeX is a free, open-source formula OCR tool: it turns formula screenshots into editable native Word equations, not images. Recognition runs entirely in your browser — images never leave your device. The whole site is AGPL-3.0 open source.",
   "home_cta_try": "Try it now",
   "home_hero_desc": "A free formula OCR tool: screenshot to LaTeX, paste into Word as an editable native equation. Runs locally in your browser — no uploads, no sign-up.",
   "nav_home": "Home"
