@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Directive } from 'vue'
 import katex from 'katex'
+import { FEEDBACK_URL } from '../utils/siteConfig'
 
 // 产品首页 v3：在 v2 门面基础上加入克制的动效——
 // Hero 一次性入场渐显、悬浮符号氛围、仿样窗微浮动、滚动进入视口时揭示（尊重 prefers-reduced-motion）。
@@ -343,24 +344,44 @@ const vReveal: Directive<HTMLElement, number | undefined> = {
         <p class="mt-4 text-sm leading-7 text-[var(--pk-ink)]">
           {{ t('home_about_body') }}
         </p>
+        <a
+          v-if="FEEDBACK_URL"
+          :href="FEEDBACK_URL"
+          target="_blank"
+          rel="noopener"
+          class="mt-3 inline-block text-xs text-[var(--pk-muted)] underline decoration-dotted underline-offset-4 hover:text-[var(--pk-primary)]"
+        >
+          {{ t('feedback_action') }}
+        </a>
       </div>
     </section>
 
     <!-- 6. 页脚（备案号行：ICP 备案通过后在此渲染，链接 https://beian.miit.gov.cn/） -->
     <footer class="bg-[#1f3d5c] py-6 text-center text-xs text-white/60">
       <p>{{ t('footer_brand') }}</p>
-      <a
-        href="https://github.com/xym041015/pailishi"
-        target="_blank"
-        rel="noopener"
-        class="mt-1 inline-flex items-center gap-1 text-white/70 hover:text-white"
-      >
-        <UIcon
-          name="i-simple-icons-github"
-          class="h-3.5 w-3.5"
-        />
-        GitHub
-      </a>
+      <span class="mt-1 flex items-center justify-center gap-4">
+        <a
+          href="https://github.com/xym041015/pailishi"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-1 text-white/70 hover:text-white"
+        >
+          <UIcon
+            name="i-simple-icons-github"
+            class="h-3.5 w-3.5"
+          />
+          GitHub
+        </a>
+        <a
+          v-if="FEEDBACK_URL"
+          :href="FEEDBACK_URL"
+          target="_blank"
+          rel="noopener"
+          class="text-white/70 hover:text-white"
+        >
+          {{ t('feedback_action') }}
+        </a>
+      </span>
     </footer>
   </div>
 </template>

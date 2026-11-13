@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { FEEDBACK_URL } from '../utils/siteConfig'
+
 useSeoMeta({
   title: '使用教程 — 拍立式 SnapLaTeX',
   description: '三步学会拍立式：截图公式 → 粘贴进网页 → 复制为 Word 可编辑原生公式。全程浏览器本地完成，图片不上传。'
@@ -197,6 +199,17 @@ useSeoMeta({
         右上角的「教程」随时可以回来复习
       </p>
     </div>
+
+    <!-- 页脚：提意见入口（FEEDBACK_URL 为空则隐藏，见 utils/siteConfig.ts） -->
+    <footer class="mx-auto mt-10 max-w-[860px] border-t border-[var(--pk-line)] pt-5 pb-2 text-center text-xs text-[var(--pk-muted)]">
+      <a
+        v-if="FEEDBACK_URL"
+        :href="FEEDBACK_URL"
+        target="_blank"
+        rel="noopener"
+        class="hover:text-[var(--pk-primary)]"
+      >{{ t('feedback_action') }}</a>
+    </footer>
   </div>
 </template>
 

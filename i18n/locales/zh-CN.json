@@ -179,5 +179,6 @@
   "home_about_body": "拍立式是一个免费开源的公式识别工具：把公式截图变成 Word、PPT 里可编辑的原生公式，不是图片。识别在你的浏览器里完成，图片不上传；整站以 AGPL-3.0 开源，欢迎查看源码。",
   "home_cta_try": "立即体验",
   "home_hero_desc": "免费公式识别工具：截图转 LaTeX，粘进 Word、PPT 就是可编辑的原生公式。识别在浏览器本地完成，图片不上传，无需登录。",
-  "nav_home": "主页"
+  "nav_home": "主页",
+  "feedback_action": "提意见"
 }
