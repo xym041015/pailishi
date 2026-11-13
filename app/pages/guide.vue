@@ -122,7 +122,7 @@ useSeoMeta({
         <p class="mt-3 text-sm text-[var(--pk-ink)]">
           点源码面板下方的「复制成 Word 公式」，打开 Word 按
           <kbd class="pk-kbd">Ctrl</kbd><kbd class="pk-kbd">V</kbd>
-          —— 得到的就是<span class="pk-marker">可编辑的原生公式</span>，不是图片。
+          —— 得到的就是<span class="pk-marker">可编辑的原生公式</span>，不是图片。PPT 里同样直接粘贴即可。
         </p>
         <p class="mt-2 flex items-center gap-1.5 text-sm text-[var(--pk-warn)]">
           <UIcon
@@ -160,8 +160,8 @@ useSeoMeta({
         <p>不会。识别完全在你的浏览器里完成，图片不离开这台设备；只有你主动配置了云端识别通道时，图片才会发往对应服务商。</p>
       </details>
       <details>
-        <summary>能在 WPS 里用吗？</summary>
-        <p>WPS 文字对原生公式的兼容性不如 Word，推荐 Word 2016+ 或 Microsoft 365。</p>
+        <summary>能在 WPS 或 PPT 里用吗？</summary>
+        <p>WPS 文字对原生公式的兼容性不如 Word，推荐 Word 2016+ 或 Microsoft 365；PowerPoint 里同样可以直接粘贴。</p>
       </details>
     </section>
 

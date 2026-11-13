@@ -147,7 +147,7 @@
   "home_schedule": "Features",
   "home_nav_workspace": "Workspace",
   "home_feat1_name": "Formula OCR",
-  "home_feat1_desc": "Screenshot to LaTeX, editable in Word",
+  "home_feat1_desc": "Screenshot to LaTeX, paste as editable equations in Word and PPT",
   "home_feat2_name": "Quick guide",
   "home_feat2_desc": "Learn it in 30 seconds, FAQ included",
   "home_feat3_name": "Handwriting pad",
@@ -176,8 +176,8 @@
   "home_step3_desc": "Click “Copy as Word equation”, paste in Word",
   "home_steps_link": "Full guide",
   "home_about_eyebrow": "About",
-  "home_about_body": "SnapLaTeX is a free, open-source formula OCR tool: it turns formula screenshots into editable native Word equations, not images. Recognition runs entirely in your browser — images never leave your device. The whole site is AGPL-3.0 open source.",
+  "home_about_body": "SnapLaTeX is a free, open-source formula OCR tool: it turns formula screenshots into editable native equations for Word and PowerPoint, not images. Recognition runs entirely in your browser — images never leave your device. The whole site is AGPL-3.0 open source.",
   "home_cta_try": "Try it now",
-  "home_hero_desc": "A free formula OCR tool: screenshot to LaTeX, paste into Word as an editable native equation. Runs locally in your browser — no uploads, no sign-up.",
+  "home_hero_desc": "A free formula OCR tool: screenshot to LaTeX, paste into Word or PowerPoint as an editable native equation. Runs locally in your browser — no uploads, no sign-up.",
   "nav_home": "Home"
 }
