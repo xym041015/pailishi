@@ -7,10 +7,9 @@ useSeoMeta({
 
 <template>
   <div class="pk-guide relative z-10 mx-auto h-full w-full max-w-[1100px] overflow-y-auto px-4 pb-16">
-    <!-- 页首： eyebrow + 宋体大标题 -->
+    <!-- 页首：宋体大标题 -->
     <header class="mx-auto max-w-[760px] text-center">
-      <span class="pk-fig-no">使用教程</span>
-      <h1 class="pk-serif mt-3 text-3xl font-bold tracking-wide text-[var(--pk-ink)]">
+      <h1 class="pk-serif text-3xl font-bold tracking-wide text-[var(--pk-ink)]">
         三步，把截图里的公式搬进 Word
       </h1>
       <p class="mt-3 text-sm leading-6 text-[var(--pk-muted)]">
@@ -71,12 +70,9 @@ useSeoMeta({
         </p>
       </div>
     </div>
-    <p class="mx-auto mt-2 max-w-[860px] text-center text-xs text-[var(--pk-muted)]">
-      演示会自动循环播放 · 从左到右就是完整的使用顺序
-    </p>
 
     <!-- 三步详解 -->
-    <section class="mx-auto mt-10 max-w-[860px] space-y-4">
+    <section class="mx-auto mt-12 max-w-[860px] space-y-4">
       <article class="pk-sec rounded-md border border-[var(--pk-line)] bg-[var(--pk-panel)] p-5">
         <div class="flex items-baseline gap-3">
           <span class="pk-fig-no">第 1 步</span>
