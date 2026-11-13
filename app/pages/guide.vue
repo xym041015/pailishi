@@ -185,15 +185,19 @@ useSeoMeta({
       </p>
     </section>
 
-    <!-- CTA -->
-    <div class="mx-auto mt-8 flex max-w-[860px] flex-col items-center gap-2 pb-4 text-center">
+    <!-- CTA：整页的重点，用荧光笔黄大胶囊"划"出来 -->
+    <div class="mx-auto mt-12 flex max-w-[860px] flex-col items-center gap-3 pb-6 text-center">
       <NuxtLink
         to="/ocr"
-        class="pk-btn pk-btn-solid"
+        class="group inline-flex items-center gap-3 rounded-full bg-[var(--pk-highlight)] px-10 py-4 shadow-[0_5px_0_rgba(43,92,143,0.35)] transition-all hover:-translate-y-1 hover:shadow-[0_9px_0_rgba(43,92,143,0.3)] active:translate-y-0.5 active:shadow-[0_2px_0_rgba(43,92,143,0.35)]"
       >
-        回到工作台，点「示例图片」试一张
+        <span class="pk-serif text-lg font-bold text-[#1f3d5c] sm:text-xl">回到工作台，点「示例图片」试一张</span>
+        <UIcon
+          name="i-lucide-arrow-right"
+          class="h-6 w-6 shrink-0 text-[#1f3d5c] transition-transform group-hover:translate-x-1.5"
+        />
       </NuxtLink>
-      <p class="text-xs text-[var(--pk-muted)]">
+      <p class="text-sm text-[var(--pk-muted)]">
         右上角的「教程」随时可以回来复习
       </p>
     </div>
