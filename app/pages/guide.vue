@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { FEEDBACK_URL } from '../utils/siteConfig'
 
+const { t } = useI18n()
+
 useSeoMeta({
   title: '使用教程 — 拍立式 SnapLaTeX',
   description: '三步学会拍立式：截图公式 → 粘贴进网页 → 复制为 Word 可编辑原生公式。全程浏览器本地完成，图片不上传。'
