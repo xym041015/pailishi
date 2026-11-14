@@ -10,7 +10,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="pk-guide relative z-10 mx-auto h-full w-full max-w-[1100px] overflow-y-auto px-4 pb-16">
+  <div class="pk-guide relative z-10 mx-auto h-full w-full max-w-[1100px] overflow-y-auto px-4 pb-16 pt-10">
     <!-- 页首：宋体大标题 -->
     <header class="mx-auto max-w-[760px] text-center">
       <h1 class="pk-serif text-3xl font-bold tracking-wide text-[var(--pk-ink)]">
@@ -24,7 +24,7 @@ useSeoMeta({
 
     <!-- 签名元素：三格板书演示条（循环动画） -->
     <div
-      class="pk-demo mx-auto mt-8 flex max-w-[860px] items-stretch justify-center gap-2 sm:gap-3"
+      class="pk-demo mx-auto mt-10 flex max-w-[860px] items-stretch justify-center gap-2 sm:gap-3"
       aria-hidden="true"
     >
       <!-- 第 1 格：取景框截图 -->
