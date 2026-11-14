@@ -1,4 +1,4 @@
 // 站点级可配置项
 // 提意见渠道：腾讯问卷的分享链接（在 wj.qq.com 建好问卷后，把分享链接填到下面）
 // 留空 = 全站「提意见」入口自动隐藏
-export const FEEDBACK_URL = ''
+export const FEEDBACK_URL = 'https://wj.qq.com/s2/28678157/eohu/'
