@@ -191,7 +191,9 @@ function eraseAtPt(pt: Point) {
 function onDown(e: PointerEvent) {
   if (activeId !== null || e.button !== 0) return // 已有指针绘制中 / 非主键不落墨
   activeId = e.pointerId
-  canvas.value!.setPointerCapture(e.pointerId)
+  try {
+    canvas.value!.setPointerCapture(e.pointerId)
+  } catch { /* 指针已释放，无需捕获 */ }
   const pt = toLogical(e)
   if (tool.value.kind === 'eraser') {
     eraseAtPt(pt)

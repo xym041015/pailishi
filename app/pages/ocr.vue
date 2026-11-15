@@ -129,7 +129,14 @@ async function maybeAutoCopy() {
 async function runOCR(file: File) {
   let input = file
   if (input.type === 'image/svg+xml' && !getActiveCloudProvider(engineSettings.value)) {
-    input = await convertSvgToPng(input)
+    try {
+      input = await convertSvgToPng(input)
+    } catch (err) {
+      // 转换失败发生在 useRecognize 之前（'predict' toast 尚未建立，无处 update），
+      // 需自行弹失败反馈，否则损坏/伪造 mime 的 svg 会变成无提示的未处理 rejection
+      toast.add({ title: t('recognize_failed') + ` ${err instanceof Error ? err.message : String(err)}`, color: 'error', duration: 0 })
+      return
+    }
   }
   try {
     latexCode.value = await recognizer.runOCR(input, engineSettings.value)

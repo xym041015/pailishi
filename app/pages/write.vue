@@ -28,7 +28,7 @@ const recognizer = useRecognize({ t, toast })
 const { recognizing, confidenceValue, runOCR } = recognizer
 const { exporting, copyLatex, copyWordFormula, exportDocx } = useFormulaActions(() => latexCode.value, t)
 
-// 源码与预览共用一档字号（手写页无分栏字号微调需求）；钳位/步进与 ocr.vue 源码区一致（12–24，步进 1）
+// 源码与预览共用一档字号（手写页无分栏字号微调需求）；钳位范围与 ocr.vue 一致（12–24），默认 24（范围内）
 const fontSize = ref(24)
 const autoCopy = ref<AutoCopyMode>('off')
 
@@ -63,7 +63,11 @@ async function maybeAutoCopy() {
 
 async function recognize() {
   const blob = await board.value?.exportPng()
-  if (!blob) return
+  if (!blob) {
+    // toBlob 返回 null 概率≈0（画板已渲染），仅兜底：静默返回会让用户以为点了没反应
+    toast.add({ title: t('recognize_failed'), color: 'error', duration: 2000 })
+    return
+  }
   let out = ''
   try {
     // 空输出（模型/云端返回空串）已在 useRecognize 内判定为失败：
