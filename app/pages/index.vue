@@ -427,19 +427,9 @@ const vReveal: Directive<HTMLElement, number | undefined> = {
   animation: pk-hero-up 0.8s ease both;
 }
 
-/* 仿样窗微浮动 */
-@keyframes pk-float {
-  from {
-    transform: translateY(0);
-  }
-
-  to {
-    transform: translateY(-8px);
-  }
-}
-
+/* 仿样窗：只保留入场渐显，不做上下浮动 */
 .pk-hero-mock {
-  animation: pk-hero-up 0.8s ease both, pk-float 6s ease-in-out 1.2s infinite alternate;
+  animation: pk-hero-up 0.8s ease both;
 }
 
 /* 漂浮数学符号 */
