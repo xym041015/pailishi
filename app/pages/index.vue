@@ -9,10 +9,27 @@ useSeoMeta({
   description: '免费公式识别工具：截图转 LaTeX，粘进 Word 就是可编辑原生公式。无需登录，识别在浏览器本地完成，图片不上传。'
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-// Hero 里的真实操作循环视频：静音自动播放；偏好减少动效时停在海报帧
+// Hero 里的真实操作循环视频：静音自动播放；偏好减少动效时停在海报帧。
+// 字幕按播放进度切换（跟随 loop 重同步），文案随语言切换。
 const heroVideo = ref<HTMLVideoElement | null>(null)
+const heroTime = ref(0)
+const heroCaps = [
+  { start: 0.2, end: 3.6, step: '1', zh: '⌘V 粘贴公式截图', en: 'Paste a formula screenshot (⌘V)' },
+  { start: 4.0, end: 6.8, step: '2', zh: '自动识别成 LaTeX', en: 'Recognized as LaTeX automatically' },
+  { start: 7.2, end: 11.8, step: '3', zh: '点击「复制成 Word 公式」', en: 'Click “Copy as Word equation”' },
+  { start: 12.2, end: 14.8, step: '4', zh: '粘进 Word', en: 'Paste into Word' },
+  { start: 15.0, end: 18.3, step: '', zh: '原生公式，不是图片', en: 'A native equation — not an image' },
+  { start: 18.7, end: 21.5, step: '', zh: '直接在 Word 里编辑', en: 'Edit it right in Word' },
+  { start: 21.8, end: 24.6, step: '', zh: '文字、公式，都能改', en: 'Text and equations — both editable' }
+] as const
+const heroCap = computed(() =>
+  heroCaps.find(c => heroTime.value >= c.start && heroTime.value < c.end)
+)
+const onHeroTime = () => {
+  heroTime.value = heroVideo.value?.currentTime ?? 0
+}
 onMounted(() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     heroVideo.value?.removeAttribute('autoplay')
@@ -124,7 +141,7 @@ const vReveal: Directive<HTMLElement, number | undefined> = {
           class="pk-hero-mock mx-auto w-full max-w-[540px]"
           style="animation-delay: 0.3s"
         >
-          <div class="pk-hero-anim overflow-hidden rounded-xl bg-[var(--pk-panel)] shadow-2xl ring-1 ring-white/20">
+          <div class="pk-hero-anim relative overflow-hidden rounded-xl bg-[var(--pk-panel)] shadow-2xl ring-1 ring-white/20">
             <div class="flex h-8 items-center gap-1.5 border-b border-[var(--pk-line)] bg-[#eef1f5] px-3">
               <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
               <span class="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
@@ -144,7 +161,21 @@ const vReveal: Directive<HTMLElement, number | undefined> = {
               playsinline
               preload="metadata"
               aria-hidden="true"
+              @timeupdate="onHeroTime"
             />
+            <!-- 宣传字幕：跟随播放进度切换 -->
+            <div
+              v-if="heroCap"
+              class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3"
+            >
+              <span class="pk-serif inline-flex items-center gap-2 rounded-full bg-[#1f3d5c]/90 px-4 py-1.5 text-sm font-semibold text-white shadow-lg ring-1 ring-white/25">
+                <span
+                  v-if="heroCap.step"
+                  class="rounded-full bg-[#f6e27a] px-2 py-0.5 text-[11px] font-bold text-[#1f3d5c]"
+                >{{ locale.startsWith('zh') ? `第 ${heroCap.step} 步` : `Step ${heroCap.step}` }}</span>
+                {{ locale.startsWith('zh') ? heroCap.zh : heroCap.en }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
