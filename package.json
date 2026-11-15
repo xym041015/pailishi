@@ -8,6 +8,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
+    "test": "vitest run",
     "typecheck": "nuxt typecheck",
     "generate": "nuxt generate"
   },
@@ -34,6 +35,7 @@
     "eslint": "^9.37.0",
     "sass": "^1.94.2",
     "typescript": "^5.9.3",
+    "vitest": "^5.1.0",
     "vue-tsc": "^3.1.0"
   },
   "resolutions": {
