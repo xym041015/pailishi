@@ -3,6 +3,15 @@ import { FEEDBACK_URL } from '../utils/siteConfig'
 
 const { t } = useI18n()
 
+// 实录视频：静音自动循环；偏好减少动效时停在海报帧
+const guideVideo = ref<HTMLVideoElement | null>(null)
+onMounted(() => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    guideVideo.value?.removeAttribute('autoplay')
+    guideVideo.value?.pause()
+  }
+})
+
 useSeoMeta({
   title: '使用教程 — 拍立式 SnapLaTeX',
   description: '三步学会拍立式：截图公式 → 粘贴进网页 → 复制为 Word 可编辑原生公式。全程浏览器本地完成，图片不上传。'
@@ -22,58 +31,26 @@ useSeoMeta({
       </p>
     </header>
 
-    <!-- 签名元素：三格板书演示条（循环动画） -->
-    <div
-      class="pk-demo mx-auto mt-10 flex max-w-[860px] items-stretch justify-center gap-2 sm:gap-3"
-      aria-hidden="true"
-    >
-      <!-- 第 1 格：取景框截图 -->
-      <div class="pk-demo__frame pk-demo__frame--snap">
-        <div class="pk-demo__screen">
-          <span class="pk-demo__corner pk-demo__corner--tl" />
-          <span class="pk-demo__corner pk-demo__corner--tr" />
-          <span class="pk-demo__corner pk-demo__corner--bl" />
-          <span class="pk-demo__corner pk-demo__corner--br" />
-          <span class="pk-demo__formula">2<sup>2</sup>·90°·f|<sub>x=1</sub></span>
-          <span class="pk-demo__flash" />
-        </div>
-        <p class="pk-demo__cap">
-          <span class="pk-fig-no">第 1 步</span> 截图
-        </p>
+    <!-- 签名元素：40 秒真实操作实录（静音自动循环，可开声音） -->
+    <figure class="pk-video mx-auto mt-10 max-w-[860px]">
+      <div class="overflow-hidden rounded-md border border-[var(--pk-line)] bg-[var(--pk-panel)] shadow-sm">
+        <video
+          ref="guideVideo"
+          class="block w-full"
+          src="/assets/tutorial-demo.mp4"
+          poster="/assets/tutorial-demo-poster.jpg"
+          autoplay
+          muted
+          loop
+          controls
+          playsinline
+          preload="metadata"
+        />
       </div>
-      <span class="pk-demo__arrow">→</span>
-      <!-- 第 2 格：网页 LaTeX 面板 -->
-      <div class="pk-demo__frame pk-demo__frame--web">
-        <div class="pk-demo__page">
-          <div class="pk-demo__bar">
-            <span class="pk-demo__bar-dot" />
-            <span>LaTeX 源码</span>
-          </div>
-          <p class="pk-demo__code">
-            2^{2^{lim_{n→∞}(\frac{1}{2})^n}90°f|_{x=1}}
-          </p>
-          <span class="pk-demo__chip">复制成 Word 公式</span>
-        </div>
-        <p class="pk-demo__cap">
-          <span class="pk-fig-no">第 2 步</span> 粘贴
-        </p>
-      </div>
-      <span class="pk-demo__arrow">→</span>
-      <!-- 第 3 格：Word 文档 -->
-      <div class="pk-demo__frame pk-demo__frame--word">
-        <div class="pk-demo__doc">
-          <p class="pk-demo__doc-line" />
-          <p class="pk-demo__doc-formula">
-            2<sup>2<sup>lim</sup>ₙ₌₁</sup>·90°·f|<sub>x=1</sub>
-          </p>
-          <p class="pk-demo__doc-line" />
-          <span class="pk-demo__sel" />
-        </div>
-        <p class="pk-demo__cap">
-          <span class="pk-fig-no">第 3 步</span> 粘进 Word
-        </p>
-      </div>
-    </div>
+      <figcaption class="mt-2 text-center text-xs text-[var(--pk-muted)]">
+        图 · 40 秒实录：一张截图的旅程（静音自动播放，点播放器右下角可开声音）
+      </figcaption>
+    </figure>
 
     <!-- 三步详解 -->
     <section class="mx-auto mt-12 max-w-[860px] space-y-4">
@@ -216,255 +193,9 @@ useSeoMeta({
 </template>
 
 <style scoped>
-/* 演示条：三格循环高亮，从取景框 → 网页 → Word，一轮 9 秒 */
-.pk-demo__frame {
-  animation: pk-demo-cycle 9s infinite;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-  opacity: 0.38;
-}
-
-.pk-demo__frame--snap {
-  animation-delay: 0s;
-}
-
-.pk-demo__frame--web {
-  animation-delay: 3s;
-}
-
-.pk-demo__frame--word {
-  animation-delay: 6s;
-}
-
-@keyframes pk-demo-cycle {
-  0% {
-    opacity: 0.38;
-    transform: none;
-  }
-
-  6% {
-    opacity: 1;
-    transform: translateY(-3px);
-  }
-
-  28% {
-    opacity: 1;
-    transform: translateY(-3px);
-  }
-
-  33% {
-    opacity: 0.38;
-    transform: none;
-  }
-
-  100% {
-    opacity: 0.38;
-  }
-}
-
-.pk-demo__arrow {
-  align-self: center;
-  color: var(--pk-muted);
-  flex-shrink: 0;
-  font-size: 18px;
-}
-
-.pk-demo__screen,
-.pk-demo__page,
-.pk-demo__doc {
-  background: var(--pk-panel);
-  border: 1px solid var(--pk-line);
-  border-radius: 6px;
-  flex: 1;
-  padding: 12px;
-  position: relative;
-}
-
-.pk-demo__screen {
-  min-height: 108px;
-}
-
-.pk-demo__corner {
-  border: 2px solid var(--pk-primary);
-  height: 14px;
-  position: absolute;
-  width: 14px;
-}
-
-.pk-demo__corner--tl {
-  border-right: 0;
-  border-top: 0;
-  left: 8px;
-  top: 8px;
-}
-
-.pk-demo__corner--tr {
-  border-right: 0;
-  border-top: 0;
-  right: 8px;
-  top: 8px;
-  transform: rotate(90deg);
-}
-
-.pk-demo__corner--bl {
-  border-bottom: 0;
-  border-left: 0;
-  bottom: 8px;
-  left: 8px;
-  transform: rotate(-90deg);
-}
-
-.pk-demo__corner--br {
-  border-bottom: 0;
-  border-left: 0;
-  bottom: 8px;
-  right: 8px;
-  transform: rotate(180deg);
-}
-
-.pk-demo__formula {
-  color: var(--pk-ink);
-  font-family: 'STIX Two Math', 'Cambria Math', Georgia, serif;
-  font-style: italic;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  white-space: nowrap;
-}
-
-/* 快门闪烁：在第 1 格被"高亮"的瞬间闪一下 */
-.pk-demo__flash {
-  animation: pk-demo-flash 9s infinite;
-  background: rgba(255, 255, 255, 0.85);
-  inset: 0;
-  opacity: 0;
-  position: absolute;
-}
-
-@keyframes pk-demo-flash {
-  0% {
-    opacity: 0.8;
-  }
-
-  14% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-.pk-demo__bar {
-  align-items: center;
-  background: var(--pk-board);
-  border-radius: 4px;
-  color: #fff;
-  display: flex;
-  font-size: 10px;
-  gap: 6px;
-  padding: 3px 8px;
-}
-
-.pk-demo__bar-dot {
-  background: var(--pk-highlight, #f6e27a);
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
-}
-
-.pk-demo__code {
-  color: var(--pk-ink);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
-  margin-top: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pk-demo__chip {
-  background: var(--pk-primary);
-  border-radius: 4px;
-  bottom: 8px;
-  color: #fff;
-  display: inline-block;
-  font-size: 10px;
-  left: 12px;
-  padding: 2px 8px;
-  position: absolute;
-}
-
-.pk-demo__doc {
-  padding: 12px 16px;
-}
-
-.pk-demo__doc-line {
-  background: var(--pk-line);
-  border-radius: 2px;
-  height: 6px;
-  margin-top: 10px;
-}
-
-.pk-demo__doc-formula {
-  color: var(--pk-ink);
-  font-family: 'STIX Two Math', 'Cambria Math', Georgia, serif;
-  margin: 6px 0;
-  text-align: center;
-}
-
-.pk-demo__sel {
-  animation: pk-demo-sel 9s infinite;
-  animation-delay: 6s;
-  border: 1.5px dashed rgba(43, 92, 143, 0.75);
-  border-radius: 4px;
-  inset: 18% 10%;
-  opacity: 0;
-  position: absolute;
-}
-
-@keyframes pk-demo-sel {
-  0% {
-    opacity: 0;
-  }
-
-  6% {
-    opacity: 1;
-  }
-
-  28% {
-    opacity: 1;
-  }
-
-  33% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-.pk-demo__cap {
-  align-items: center;
-  color: var(--pk-muted);
-  display: flex;
-  font-size: 12px;
-  gap: 8px;
-}
-
-@media (max-width: 640px) {
-  .pk-demo {
-    flex-direction: column;
-  }
-
-  .pk-demo__arrow {
-    transform: rotate(90deg);
-  }
+/* 实录视频框：轻描边，配色随备课纸 */
+.pk-video video {
+  aspect-ratio: 16 / 9;
 }
 
 /* 荧光笔划重点 */
@@ -532,18 +263,5 @@ useSeoMeta({
   margin-bottom: 12px;
 }
 
-/* 动效尊重系统偏好 */
-@media (prefers-reduced-motion: reduce) {
-  .pk-demo__frame,
-  .pk-demo__flash,
-  .pk-demo__sel {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .pk-demo__flash {
-    opacity: 0;
-  }
-}
+/* 动效尊重系统偏好（由脚本暂停自动播放） */
 </style>
