@@ -21,6 +21,7 @@
       </div>
       <div class="flex items-center gap-0.5">
         <UTooltip
+          v-if="showInsert"
           :text="t('insert_formula')"
           :delay-duration="0"
         >
@@ -186,7 +187,7 @@
 <script setup lang="ts">
 type AutoCopyMode = 'off' | 'latex' | 'mathml'
 
-defineProps<{
+withDefaults(defineProps<{
   code: string
   fontSize: number
   canUndo: boolean
@@ -194,7 +195,9 @@ defineProps<{
   autoCopy: AutoCopyMode
   exporting: boolean
   confidence: number | null
-}>()
+  // /write 没有目标文档可插入公式，隐藏入口；/ocr 保持默认 true 不变
+  showInsert?: boolean
+}>(), { showInsert: true })
 
 const emit = defineEmits<{
   'update:code': [value: string]

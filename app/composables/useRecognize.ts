@@ -76,6 +76,12 @@ export function useRecognize(options: { t: (k: string) => string, toast: ReturnT
 
       // 与现行代码同序：先格式化（可能抛错走失败 toast），再落 confidence / 成功 toast
       const formatted = orthographyToLaTeX(formatLatex(output))
+      // 空输出视为失败（spec §7）：模型偶尔输出空串 / 云端返回空 latex。
+      // 在此统一拦截（/ocr 与 /write 共用），不落 confidence、不弹成功 toast，
+      // 走下方 catch 的失败 toast + rethrow，页面不会再看到「成功+失败」双 toast
+      if (!formatted.trim()) {
+        throw new Error(t('empty_output'))
+      }
       confidenceValue.value = confidence
       toast.update('predict', {
         title: t('recognize_success') + ' ' + timeStr,

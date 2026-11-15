@@ -142,6 +142,7 @@
   "recognize_success": "识别成功",
   "recognize_failed": "识别失败",
   "unknown_error": "未知错误，请查看控制台日志",
+  "empty_output": "未识别出内容，请写清楚一点或切换云端引擎",
   "guide_nav": "教程",
   "guide_empty_link": "第一次用？看 30 秒教程",
   "home_schedule": "功能栏",

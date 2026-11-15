@@ -18,6 +18,7 @@ const board = ref<InstanceType<typeof HandwritingBoard> | null>(null)
 const boardEmpty = ref(true)
 const latexCode = ref('')
 const showSettings = ref(false)
+const showHelp = ref(false)
 
 const engineSettings = ref<EngineSettings>(loadEngineSettings())
 
@@ -27,8 +28,8 @@ const recognizer = useRecognize({ t, toast })
 const { recognizing, confidenceValue, runOCR } = recognizer
 const { exporting, copyLatex, copyWordFormula, exportDocx } = useFormulaActions(() => latexCode.value, t)
 
-// 源码与预览共用一档字号（手写页无分栏字号微调需求）
-const fontSize = ref(28)
+// 源码与预览共用一档字号（手写页无分栏字号微调需求）；钳位/步进与 ocr.vue 源码区一致（12–24，步进 1）
+const fontSize = ref(24)
 const autoCopy = ref<AutoCopyMode>('off')
 
 // 引擎 pill：没配云端供应商（或没填 key）→ 本地模型；显示名与 SettingsDrawer 同源
@@ -63,20 +64,16 @@ async function maybeAutoCopy() {
 async function recognize() {
   const blob = await board.value?.exportPng()
   if (!blob) return
+  let out = ''
   try {
-    const out = await runOCR(new File([blob], `handwritten-${Date.now()}.png`, { type: 'image/png' }), engineSettings.value)
-    if (!out.trim()) throw new Error(t('write_empty_result'))
-    latexCode.value = out
-    await maybeAutoCopy()
-  } catch (err) {
-    // 识别失败 toast 已在 useRecognize 内统一弹出，这里吞掉 rethrow 防未处理 rejection。
-    // 唯一例外：空结果——runOCR 对空串是「成功返回」（内部 toast 已变成「识别成功」），
-    // 空判定发生在页面侧，spec §7 要求此时补一条「未识别出内容」的失败提示；
-    // 用消息比对区分两种来源，真正的识别失败不会二次弹 toast
-    if (err instanceof Error && err.message === t('write_empty_result')) {
-      toast.add({ title: t('write_empty_result'), color: 'error', duration: 0 })
-    }
+    // 空输出（模型/云端返回空串）已在 useRecognize 内判定为失败：
+    // 统一弹失败 toast（t('empty_output')）并 rethrow，页面只吞掉防未处理 rejection
+    out = await runOCR(new File([blob], `handwritten-${Date.now()}.png`, { type: 'image/png' }), engineSettings.value)
+  } catch {
+    return
   }
+  latexCode.value = out
+  await maybeAutoCopy()
 }
 </script>
 
@@ -146,7 +143,7 @@ async function recognize() {
 
     <!-- 结果两栏：移动端单列，md 起左源码右预览 -->
     <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-      <!-- 手写页无源码撤销栈（撤销在画板内），canUndo/canRedo 恒 false -->
+      <!-- 手写页无源码撤销栈（撤销在画板内），canUndo/canRedo 恒 false；无目标文档可插公式，隐藏 insert -->
       <PanelSource
         class="min-w-0"
         :code="latexCode"
@@ -156,13 +153,15 @@ async function recognize() {
         :auto-copy="autoCopy"
         :exporting="exporting"
         :confidence="confidenceValue"
+        :show-insert="false"
         @update:code="latexCode = $event"
         @update:auto-copy="autoCopy = $event"
         @copy-word="copyWordFormula"
         @copy-latex="copyLatex"
         @export-docx="exportDocx"
-        @font-plus="fontSize = Math.min(40, fontSize + 2)"
-        @font-minus="fontSize = Math.max(14, fontSize - 2)"
+        @help="showHelp = true"
+        @font-plus="fontSize = Math.min(24, fontSize + 1)"
+        @font-minus="fontSize = Math.max(12, fontSize - 1)"
       />
 
       <PanelPreview
@@ -170,10 +169,12 @@ async function recognize() {
         :code="latexCode"
         :font-size="fontSize"
         @update:code="latexCode = $event"
-        @font-plus="fontSize = Math.min(40, fontSize + 2)"
-        @font-minus="fontSize = Math.max(14, fontSize - 2)"
+        @font-plus="fontSize = Math.min(24, fontSize + 1)"
+        @font-minus="fontSize = Math.max(12, fontSize - 1)"
       />
     </div>
+
+    <HelpDrawer v-model:open="showHelp" />
 
     <SettingsDrawer
       v-model:open="showSettings"
