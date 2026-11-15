@@ -36,7 +36,14 @@ describe('useStrokes', () => {
   it('clear 清空且撤销栈随之清空', () => {
     const s = useStrokes()
     s.startStroke({ x: 0, y: 0 }, 6)
+    s.addPoint({ x: 10, y: 0 })
     s.endStroke()
+    s.startStroke({ x: 1, y: 1 }, 3)
+    s.addPoint({ x: 11, y: 1 })
+    s.endStroke()
+    s.undo() // 先制造可 redo 状态，验证 clear 连 redo 栈一并清空
+    expect(s.strokes.value.length).toBe(1)
+    expect(s.canRedo.value).toBe(true)
     s.clear()
     expect(s.isEmpty.value).toBe(true)
     expect(s.canUndo.value).toBe(false)
