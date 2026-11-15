@@ -182,14 +182,19 @@ function toLogical(e: PointerEvent): Point {
   return { x: (e.clientX - rect.left) * (LOGICAL_W / rect.width), y: (e.clientY - rect.top) * (LOGICAL_H / rect.height) }
 }
 
+// 笔画级橡皮：命中整笔删除；命中导致空态变化时同步页面（原地 splice，浅 watch 感知不到）
+function eraseAtPt(pt: Point) {
+  if (eraseAt(pt, ERASER_RADIUS)) emitChange()
+  redraw()
+}
+
 function onDown(e: PointerEvent) {
   if (activeId !== null || e.button !== 0) return // 已有指针绘制中 / 非主键不落墨
   activeId = e.pointerId
   canvas.value!.setPointerCapture(e.pointerId)
   const pt = toLogical(e)
   if (tool.value.kind === 'eraser') {
-    eraseAt(pt, ERASER_RADIUS)
-    redraw()
+    eraseAtPt(pt)
     return
   }
   startStroke(pt, tool.value.width)
@@ -197,10 +202,14 @@ function onDown(e: PointerEvent) {
 }
 
 function onMove(e: PointerEvent) {
-  if (e.pointerId !== activeId) return
-  if (tool.value.kind === 'eraser') return // 橡皮按下即擦（down 里处理），move 忽略
+  if (e.pointerId !== activeId) return // activeId 非空即按住中，顺带过滤悬停 move
+  const pt = toLogical(e)
+  if (tool.value.kind === 'eraser') {
+    eraseAtPt(pt) // 拖动连擦：按住滑过即逐笔擦除
+    return
+  }
   if (!current.value) return
-  addPoint(toLogical(e))
+  addPoint(pt)
   redraw()
 }
 
