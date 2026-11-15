@@ -39,6 +39,13 @@ const isDark = computed(() => colorMode.value === 'dark')
           {{ t('home_nav_workspace') }}
         </NuxtLink>
         <NuxtLink
+          to="/write"
+          class="rounded-md px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"
+          :class="route.path.startsWith('/write') ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
+        >
+          {{ t('nav_write') }}
+        </NuxtLink>
+        <NuxtLink
           to="/guide"
           class="rounded-md px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"
           :class="route.path.startsWith('/guide') ? 'bg-[rgba(255,255,255,0.16)] font-semibold text-white' : 'text-[var(--pk-chalk-dim)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'"
