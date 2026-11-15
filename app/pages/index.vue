@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Directive } from 'vue'
-import katex from 'katex'
 import { FEEDBACK_URL } from '../utils/siteConfig'
 
 // 产品首页 v3：在 v2 门面基础上加入克制的动效——
@@ -12,11 +11,14 @@ useSeoMeta({
 
 const { t } = useI18n()
 
-const DEMO_LATEX = '2^{2^{\\operatorname*{lim}_{n\\rightarrow\\infty}\\left({\\frac{1}{2}}\\right)^{n}}90^{\\circ}f|_{x=1}}'
-
-const demoRendered = computed(() =>
-  katex.renderToString(DEMO_LATEX, { throwOnError: false, displayMode: true })
-)
+// Hero 里的真实操作循环视频：静音自动播放；偏好减少动效时停在海报帧
+const heroVideo = ref<HTMLVideoElement | null>(null)
+onMounted(() => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    heroVideo.value?.removeAttribute('autoplay')
+    heroVideo.value?.pause()
+  }
+})
 
 const feats = computed(() => [
   { icon: 'i-lucide-camera', name: t('home_feat1_name'), desc: t('home_feat1_desc'), to: '/ocr', wip: false },
@@ -117,7 +119,7 @@ const vReveal: Directive<HTMLElement, number | undefined> = {
           </div>
         </div>
 
-        <!-- 工作台仿样：三迷你栏，真 KaTeX 渲染，整窗微浮动 -->
+        <!-- 工作台实录：真实「粘贴→识别→复制→粘进 Word」循环，静音自动播放 -->
         <div
           class="pk-hero-mock mx-auto w-full max-w-[540px]"
           style="animation-delay: 0.3s"
@@ -131,33 +133,18 @@ const vReveal: Directive<HTMLElement, number | undefined> = {
                 snaplatex.cn/ocr
               </span>
             </div>
-            <div class="grid grid-cols-3 gap-2 p-3">
-              <div class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] p-2">
-                <span class="pk-fig-no">1</span>
-                <div class="relative mt-1.5 flex h-24 items-center justify-center overflow-hidden rounded bg-white p-1">
-                  <ViewfinderCorners :active="false" />
-                  <img
-                    src="/assets/test_img/单行公式.png"
-                    alt=""
-                    class="max-h-full max-w-full object-contain"
-                  >
-                </div>
-              </div>
-              <div class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] p-2">
-                <span class="pk-fig-no">2</span>
-                <p class="mt-1.5 h-24 overflow-hidden break-all rounded bg-white p-1.5 font-mono text-[7px] leading-[11px] text-[var(--pk-ink)]">
-                  {{ DEMO_LATEX }}
-                </p>
-              </div>
-              <div class="rounded-md border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] p-2">
-                <span class="pk-fig-no">3</span>
-                <div
-                  class="pk-katex mt-1.5 flex h-24 items-center justify-center overflow-hidden rounded bg-white"
-                  :style="{ fontSize: '9px' }"
-                  v-html="demoRendered"
-                />
-              </div>
-            </div>
+            <video
+              ref="heroVideo"
+              class="block w-full"
+              src="/assets/demo-hero.mp4"
+              poster="/assets/demo-hero-poster.jpg"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-hidden="true"
+            />
           </div>
         </div>
       </div>
