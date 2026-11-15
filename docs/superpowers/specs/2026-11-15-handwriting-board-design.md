@@ -76,9 +76,9 @@ HandwritingBoard.vue（canvas 画板）
 - 云端引擎（SimpleTex 标准 / OpenAI）照常带置信度徽章（绿 ≥80 / 橙 <80）
 - 模型未下载：点识别走现有进度 toast + 中断重试链路
 
-## 5. 管线修复（spike 发现的真 bug）
+## 5. 管线核查结论（spike 附带检查，2026-11-15 修正）
 
-`imageProcessor.ts`：`grey()` 之前若 `colorModel` 非 RGB/RGBA（某些 PNG/JPEG 解码产物）会抛 `image colorModel must be RGB or RGBA`——线上传图报错源之一。修复：进入预处理即 `convertColor('RGB')`（image-js v2 API），RGBA 带 alpha 时仍保留白底打平逻辑（canvas 路径已有；decode 路径补齐）。
+spike 初判的「`grey()` colorModel 崩溃」经复查为 **Node 复刻路径的伪影**：站点预处理走 `createImageBitmap + canvas`（恒输出 RGBA），`grey()` 不可能收到非法色彩模型——**站点无需修复**（该坑只存在于用 image-js `decode()` 的 Node 测试脚本里，已在 spike 中用 `flatten` 白底解决）。
 
 `reverseColor` 对照片的误反色：v1 **不动**（触碰印刷识别精度基线；画板场景纯白底不触发）。照片手写的正确出路 = 云端引擎。
 
