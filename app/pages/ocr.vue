@@ -271,12 +271,13 @@ onMounted(async () => {
 
   window.addEventListener('paste', handlePaste)
 
+  // 首页功能卡④直达：/ocr?history=1 落地即展开识别历史抽屉
+  // 置于模型加载链之前：useSource 不可达时不应阻塞/阻断抽屉展开
+  if (route.query.history === '1') showHistory.value = true
+
   const model_config = await useSource()
   useModelLoadingToast(t, model_config, recognizer.progress, recognizer.isReady)
   await recognizer.loadModel(model_config)
-
-  // 首页功能卡④直达：/ocr?history=1 落地即展开识别历史抽屉
-  if (route.query.history === '1') showHistory.value = true
 })
 
 onBeforeUnmount(() => {

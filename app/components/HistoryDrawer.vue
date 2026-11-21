@@ -106,7 +106,7 @@ function onRestore(it: HistoryItem) {
           </div>
           <button
             type="button"
-            class="h-6 w-6 shrink-0 rounded text-[var(--pk-muted)] opacity-0 transition group-hover:opacity-100 hover:text-[var(--pk-warn)]"
+            class="h-6 w-6 shrink-0 rounded text-[var(--pk-muted)] opacity-100 md:opacity-0 md:group-hover:opacity-100 transition hover:text-[var(--pk-warn)]"
             :aria-label="t('history_remove')"
             @click.stop="$emit('remove', it.id)"
           >

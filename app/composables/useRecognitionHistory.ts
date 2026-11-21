@@ -51,14 +51,21 @@ export function useRecognitionHistory(storage: HistoryStorage = defaultStorage()
       return Array.isArray(parsed) ? parsed : []
     } catch { return [] }
   }
+  // persisted（composable 级）：是否成功落库过。从未成功（存储被禁用/损坏，defaultStorage 把
+  // setItem 异常吞成 false）→ 不淘汰，保留完整内存会话态；曾成功落库后再失败 → 真配额超限，
+  // 淘汰最旧重试；throw = 存储损坏 → 停止持久化，保留内存会话态
+  let persisted = false
   function persist() {
-    // false = 配额超限 → 淘汰最旧重试，内存最多保留最新一条；throw = 存储损坏 → 停止持久化，保留内存会话态
     try {
       while (items.value.length > 1) {
-        if (storage.write(JSON.stringify(items.value))) return
-        items.value.pop() // 淘汰最旧
+        if (storage.write(JSON.stringify(items.value))) {
+          persisted = true
+          return
+        }
+        if (!persisted) break // 从未成功落库 → 不淘汰（存储禁用/损坏场景，异常被吞成 false）
+        items.value.pop() // 淘汰最旧（真配额超限）
       }
-      storage.write(JSON.stringify(items.value)) // 单条与空列表（clear）也尝试落库
+      if (storage.write(JSON.stringify(items.value))) persisted = true // 单条与空列表（clear）也尝试落库
     } catch { /* 存储不可用：仅内存 */ }
   }
   function add(entry: { latex: string, thumb: string | null, engine: string, source: 'ocr' | 'write' }) {
@@ -73,7 +80,11 @@ export function useRecognitionHistory(storage: HistoryStorage = defaultStorage()
     persist()
   }
   function remove(id: string) {
-    items.value = items.value.filter(x => x.id !== id)
+    // 读合并写：抽屉打开期间其他实例（useRecognize 内部 add）可能已落 storage，
+    // 先并入本实例未见过的条目再删，避免用陈旧列表 persist 抹掉新条目（双实例 lost-update）。
+    // 用并集而非 load() 直接覆盖：storage 禁用时 load() 返回 [] 会清掉内存会话态
+    const stored = load().filter(s => !items.value.some(m => m.id === s.id))
+    items.value = [...stored, ...items.value].filter(x => x.id !== id)
     persist()
   }
   function clear() {
