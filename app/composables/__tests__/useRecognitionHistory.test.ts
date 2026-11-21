@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { useRecognitionHistory, type HistoryStorage } from '../useRecognitionHistory'
 
-function fakeStorage(opts: { failWritesOver?: number } = {}): HistoryStorage & { writes: number } {
+function fakeStorage(opts: { failWrites?: number[] } = {}): HistoryStorage & { writes: number } {
   let data: string | null = null
   let writes = 0
   return {
@@ -9,7 +9,7 @@ function fakeStorage(opts: { failWritesOver?: number } = {}): HistoryStorage & {
     read() { return data },
     write(s: string) {
       writes++
-      if (opts.failWritesOver !== undefined && writes > opts.failWritesOver) return false
+      if (opts.failWrites?.includes(writes)) return false
       data = s
       return true
     }
@@ -42,12 +42,12 @@ describe('useRecognitionHistory', () => {
   })
 
   it('QuotaExceeded：淘汰最旧重试直至写入成功', () => {
-    const st = fakeStorage({ failWritesOver: 1 }) // 第 2 次写起失败
+    const st = fakeStorage({ failWrites: [2] }) // 仅第 2 次写失败（模拟一次配额超限），之后成功
     const h = useRecognitionHistory(st, 10)
     h.add(entry('1'))
-    h.add(entry('2')) // 写失败 → 淘汰 '1' → 重试成功
+    h.add(entry('2')) // 第 2 次写失败 → 淘汰 '1' → 重试成功
     expect(h.items.value.map(x => x.latex)).toEqual(['2'])
-    expect(st.read()).toContain('2')
+    expect(JSON.parse(st.read()!).map(x => x.latex)).toEqual(['2'])
   })
 
   it('storage 抛异常退化为内存会话态', () => {
