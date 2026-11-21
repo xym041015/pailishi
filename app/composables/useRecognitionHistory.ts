@@ -80,6 +80,11 @@ export function useRecognitionHistory(storage: HistoryStorage = defaultStorage()
     items.value = []
     persist()
   }
+  // 重读 storage：页面实例与 useRecognize 内部实例各自持有 ref（不自动同步），
+  // 页面在打开抽屉前调用一次即可拿到最新列表（useRecognize 的 add 已落 storage）
+  function reload() {
+    items.value = load()
+  }
   const isEmpty: ComputedRef<boolean> = computed(() => items.value.length === 0)
-  return { items, isEmpty, add, remove, clear }
+  return { items, isEmpty, add, remove, clear, reload }
 }

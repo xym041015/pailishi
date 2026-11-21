@@ -71,4 +71,17 @@ describe('useRecognitionHistory', () => {
     expect(h.isEmpty.value).toBe(true)
     expect(JSON.parse(st.read()!)).toEqual([])
   })
+
+  it('reload 重读 storage：另一实例写入后本实例能看到', () => {
+    const st = fakeStorage()
+    // 场景：页面实例 h1 与 useRecognize 内部实例 h2（同 storage），h2 add 后 h1 不自动同步
+    const h1 = useRecognitionHistory(st)
+    const h2 = useRecognitionHistory(st)
+    h2.add(entry('x'))
+    expect(h1.items.value.length).toBe(0) // 各自持有 ref，未自动同步
+    h1.reload()
+    expect(h1.items.value.map(x => x.latex)).toEqual(['x']) // 重读后拿到最新
+    h1.reload()
+    expect(JSON.parse(st.read()!).length).toBe(1) // reload 只读不落库
+  })
 })

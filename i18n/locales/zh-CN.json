@@ -197,5 +197,12 @@
   "write_engine_local": "本地模型（手写建议人工核对）",
   "write_local_notice": "手写识别建议人工核对；潦草字迹可在设置中切换云端引擎对照",
   "write_caption": "图 · 手写板：写公式 → 识别 → 复制进 Word",
-  "history_engine_local": "本地"
+  "history_engine_local": "本地",
+  "history_title": "识别历史",
+  "history_empty": "还没有识别记录，识别成功后自动保存在本浏览器",
+  "history_clear": "清空全部",
+  "history_clear_confirm": "确认清空？",
+  "history_source_ocr": "工作台",
+  "history_source_write": "手写板",
+  "history_remove": "删除这条记录"
 }

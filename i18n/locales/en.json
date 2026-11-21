@@ -197,5 +197,12 @@
   "write_engine_local": "Local model (verify handwriting output)",
   "write_local_notice": "Please double-check handwriting results; for messy strokes, switch to a cloud engine in Settings",
   "write_caption": "Fig · Handwriting board: write → recognize → copy into Word",
-  "history_engine_local": "Local"
+  "history_engine_local": "Local",
+  "history_title": "Recognition history",
+  "history_empty": "No records yet — successful recognitions are saved in this browser",
+  "history_clear": "Clear all",
+  "history_clear_confirm": "Tap again to clear",
+  "history_source_ocr": "Workspace",
+  "history_source_write": "Handwriting board",
+  "history_remove": "Remove this entry"
 }

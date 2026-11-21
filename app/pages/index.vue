@@ -41,7 +41,7 @@ const feats = computed(() => [
   { icon: 'i-lucide-camera', name: t('home_feat1_name'), desc: t('home_feat1_desc'), to: '/ocr', wip: false },
   { icon: 'i-lucide-graduation-cap', name: t('home_feat2_name'), desc: t('home_feat2_desc'), to: '/guide', wip: false },
   { icon: 'i-lucide-pencil-line', name: t('home_feat3_name'), desc: t('home_feat3_desc'), to: '/write', wip: false },
-  { icon: 'i-lucide-history', name: t('home_feat4_name'), desc: t('home_feat4_desc'), wip: true },
+  { icon: 'i-lucide-history', name: t('home_feat4_name'), desc: t('home_feat4_desc'), to: '/ocr?history=1', wip: false },
   { icon: 'i-lucide-image-down', name: t('home_feat5_name'), desc: t('home_feat5_desc'), wip: true }
 ])
 

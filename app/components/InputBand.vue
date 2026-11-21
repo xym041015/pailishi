@@ -46,6 +46,22 @@
         {{ t('clear') }}
       </button>
       <UTooltip
+        :text="t('history_title')"
+        :delay-duration="0"
+      >
+        <button
+          type="button"
+          class="pk-btn pk-btn-outline pk-btn-sm"
+          aria-label="history"
+          @click="$emit('history')"
+        >
+          <UIcon
+            name="i-lucide-history"
+            class="h-3.5 w-3.5"
+          />
+        </button>
+      </UTooltip>
+      <UTooltip
         :text="t('settings_title')"
         :delay-duration="0"
       >
@@ -68,7 +84,7 @@
 <script setup lang="ts">
 defineProps<{ hasImage: boolean, hasContent: boolean, recognizing: boolean }>()
 
-defineEmits<{ recapture: [], clear: [], capture: [], settings: [] }>()
+defineEmits<{ recapture: [], clear: [], capture: [], settings: [], history: [] }>()
 
 const { t } = useI18n()
 </script>

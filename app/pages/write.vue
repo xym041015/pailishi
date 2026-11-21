@@ -18,14 +18,26 @@ const boardEmpty = ref(true)
 const latexCode = ref('')
 const showSettings = ref(false)
 const showHelp = ref(false)
+const showHistory = ref(false)
 
 const engineSettings = ref<EngineSettings>(loadEngineSettings())
 
 // 识别路由（云端优先/本地兜底）与复制导出动作复用 Task 3 的共享 composable，
 // 与 /ocr 行为一致；useOCR 已在 useRecognize 内部调用，页面只消费 isReady/progress
-const recognizer = useRecognize({ t, toast })
+const recognizer = useRecognize({ t, toast, source: 'write' })
 const { recognizing, confidenceValue, runOCR } = recognizer
 const { exporting, copyLatex, copyWordFormula, exportDocx } = useFormulaActions(() => latexCode.value, t)
+
+// 识别历史：页面实例只读列表 + remove/clear；与 useRecognize 内部实例各自持有 ref
+// 不自动同步，打开抽屉前 reload 重读 storage 保证拿到最新写入
+const history = useRecognitionHistory()
+watch(showHistory, (v) => {
+  if (v) history.reload()
+})
+
+function onHistoryRestore(latex: string) {
+  latexCode.value = latex
+}
 
 // 源码与预览共用一档字号（手写页无分栏字号微调需求）；钳位范围与 ocr.vue 一致（12–24），默认 24（范围内）
 const fontSize = ref(24)
@@ -114,19 +126,37 @@ async function recognize() {
         {{ t('write_recognize') }}
       </button>
 
-      <button
-        type="button"
-        class="inline-flex items-center gap-1.5 rounded-full border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] px-3 py-1.5 text-xs transition-colors hover:border-[var(--pk-primary)] hover:text-[var(--pk-primary)]"
-        :aria-label="t('write_engine_label')"
-        @click="showSettings = true"
-      >
-        <UIcon
-          :name="isLocal ? 'i-lucide-cpu' : 'i-lucide-cloud'"
-          class="h-3.5 w-3.5"
-        />
-        <span class="font-semibold text-[var(--pk-ink)]">{{ t('write_engine_label') }}</span>
-        <span>{{ isLocal ? t('write_engine_local') : cloudName }}</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <UTooltip
+          :text="t('history_title')"
+          :delay-duration="0"
+        >
+          <button
+            type="button"
+            class="pk-btn pk-btn-outline pk-btn-sm"
+            aria-label="history"
+            @click="showHistory = true"
+          >
+            <UIcon
+              name="i-lucide-history"
+              class="h-3.5 w-3.5"
+            />
+          </button>
+        </UTooltip>
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 rounded-full border border-[var(--pk-line)] bg-[var(--pk-edit-bg)] px-3 py-1.5 text-xs transition-colors hover:border-[var(--pk-primary)] hover:text-[var(--pk-primary)]"
+          :aria-label="t('write_engine_label')"
+          @click="showSettings = true"
+        >
+          <UIcon
+            :name="isLocal ? 'i-lucide-cpu' : 'i-lucide-cloud'"
+            class="h-3.5 w-3.5"
+          />
+          <span class="font-semibold text-[var(--pk-ink)]">{{ t('write_engine_label') }}</span>
+          <span>{{ isLocal ? t('write_engine_local') : cloudName }}</span>
+        </button>
+      </div>
     </div>
 
     <!-- 本地引擎黄条：荧光笔黄淡底，常驻不自动消失（spec §4.4） -->
@@ -181,6 +211,14 @@ async function recognize() {
       v-model:open="showSettings"
       :settings="engineSettings"
       @save="onSettingsSave"
+    />
+
+    <HistoryDrawer
+      v-model:open="showHistory"
+      :items="history.items.value"
+      @restore="onHistoryRestore"
+      @remove="history.remove"
+      @clear="history.clear"
     />
   </div>
 </template>

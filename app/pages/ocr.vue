@@ -6,6 +6,7 @@ type AutoCopyMode = 'off' | 'latex' | 'mathml'
 
 const { t } = useI18n()
 const toast = useToast()
+const route = useRoute()
 
 const DRAFT_KEY = 'pailishi-draft'
 
@@ -19,14 +20,27 @@ const showHelp = ref(false)
 const showInsert = ref(false)
 const showGuide = ref(false)
 const showSettings = ref(false)
+const showHistory = ref(false)
 
 const engineSettings = ref<EngineSettings>(loadEngineSettings())
 
 // 复制/导出动作与识别路由抽为共享 composable（/write 手写板页复用），行为与原内联实现一致
 const formula = useFormulaActions(() => latexCode.value, t)
 const { exporting } = formula
-const recognizer = useRecognize({ t, toast })
+const recognizer = useRecognize({ t, toast, source: 'ocr' })
 const { recognizing, confidenceValue } = recognizer
+
+// 识别历史：页面实例只读列表 + remove/clear；与 useRecognize 内部实例各自持有 ref
+// 不自动同步，打开抽屉前 reload 重读 storage 保证拿到最新写入
+const history = useRecognitionHistory()
+watch(showHistory, (v) => {
+  if (v) history.reload()
+})
+
+function onHistoryRestore(latex: string) {
+  // undo 栈由现有 latexCode watch 接管；草稿落库同样走现有 watch
+  latexCode.value = latex
+}
 
 function onSettingsSave(settings: EngineSettings) {
   engineSettings.value = settings
@@ -260,6 +274,9 @@ onMounted(async () => {
   const model_config = await useSource()
   useModelLoadingToast(t, model_config, recognizer.progress, recognizer.isReady)
   await recognizer.loadModel(model_config)
+
+  // 首页功能卡④直达：/ocr?history=1 落地即展开识别历史抽屉
+  if (route.query.history === '1') showHistory.value = true
 })
 
 onBeforeUnmount(() => {
@@ -276,6 +293,7 @@ onBeforeUnmount(() => {
       :recognizing="recognizing"
       @capture="showGuide = true"
       @settings="showSettings = true"
+      @history="showHistory = true"
       @recapture="recapture"
       @clear="clearWorkbench"
     />
@@ -376,6 +394,14 @@ onBeforeUnmount(() => {
       v-model:open="showSettings"
       :settings="engineSettings"
       @save="onSettingsSave"
+    />
+
+    <HistoryDrawer
+      v-model:open="showHistory"
+      :items="history.items.value"
+      @restore="onHistoryRestore"
+      @remove="history.remove"
+      @clear="history.clear"
     />
 
     <input

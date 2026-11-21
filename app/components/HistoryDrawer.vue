@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HistoryItem } from '../composables/useRecognitionHistory'
 
-defineProps<{ open: boolean, items: HistoryItem[] }>()
+const props = defineProps<{ open: boolean, items: HistoryItem[] }>()
 const emit = defineEmits<{
   'update:open': [v: boolean]
   'restore': [latex: string]
@@ -25,6 +25,13 @@ function onClear() {
   confirmClear.value = false
   emit('clear')
 }
+// 抽屉关闭时重置二次确认态：否则下次打开直接落「确认清空？」文案，且残留的 3s 定时器可能中途翻转文案
+watch(() => props.open, (v) => {
+  if (!v) {
+    confirmClear.value = false
+    if (timer) clearTimeout(timer)
+  }
+})
 onBeforeUnmount(() => {
   if (timer) clearTimeout(timer)
 })
@@ -99,8 +106,8 @@ function onRestore(it: HistoryItem) {
           </div>
           <button
             type="button"
-            class="h-6 w-6 shrink-0 rounded text-[var(--pk-muted)] opacity-0 transition group-hover:opacity-100 hover:text-[#d4574e]"
-            :aria-label="t('write_clear')"
+            class="h-6 w-6 shrink-0 rounded text-[var(--pk-muted)] opacity-0 transition group-hover:opacity-100 hover:text-[var(--pk-warn)]"
+            :aria-label="t('history_remove')"
             @click.stop="$emit('remove', it.id)"
           >
             <UIcon
