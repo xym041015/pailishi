@@ -196,5 +196,6 @@
   "write_engine_label": "识别引擎",
   "write_engine_local": "本地模型（手写建议人工核对）",
   "write_local_notice": "手写识别建议人工核对；潦草字迹可在设置中切换云端引擎对照",
-  "write_caption": "图 · 手写板：写公式 → 识别 → 复制进 Word"
+  "write_caption": "图 · 手写板：写公式 → 识别 → 复制进 Word",
+  "history_engine_local": "本地"
 }

@@ -5,8 +5,7 @@ import {
   loadEngineSettings,
   saveEngineSettings,
   getActiveCloudProvider,
-  PROVIDER_PRESETS,
-  customProviderName
+  providerDisplayName
 } from '../utils/cloudOCR'
 
 type AutoCopyMode = 'off' | 'latex' | 'mathml'
@@ -32,14 +31,12 @@ const { exporting, copyLatex, copyWordFormula, exportDocx } = useFormulaActions(
 const fontSize = ref(24)
 const autoCopy = ref<AutoCopyMode>('off')
 
-// 引擎 pill：没配云端供应商（或没填 key）→ 本地模型；显示名与 SettingsDrawer 同源
-// （预设用 label，自定义用 config.name，兜底 customProviderName）
+// 引擎 pill：没配云端供应商（或没填 key）→ 本地模型；显示名走 cloudOCR 的
+// providerDisplayName（与 SettingsDrawer / 识别历史徽章同源规则，行为不变）
 const cloudName = computed(() => {
   const provider = getActiveCloudProvider(engineSettings.value)
   if (!provider) return ''
-  return provider.config.name
-    || PROVIDER_PRESETS.find(p => p.id === provider.id)?.label
-    || customProviderName(provider.id)
+  return providerDisplayName(provider)
 })
 const isLocal = computed(() => !cloudName.value)
 

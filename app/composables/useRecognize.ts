@@ -1,8 +1,10 @@
 import { ref, type Ref } from 'vue'
 import { useOCR } from './useOCR'
-import { getActiveCloudProvider, recognizeWithProvider, type EngineSettings } from '../utils/cloudOCR'
+import { getActiveCloudProvider, providerDisplayName, recognizeWithProvider, type EngineSettings } from '../utils/cloudOCR'
 import { formatLatex, orthographyToLaTeX } from './textProcessor'
 import { WorkerStatus, type ModelConfig } from './types'
+import { useRecognitionHistory } from './useRecognitionHistory'
+import { makeThumb } from '../utils/makeThumb'
 
 /*
   从 ocr.vue 原样迁移的识别路由：云端优先（填了 key），否则本地模型；零拦截。
@@ -17,8 +19,12 @@ import { WorkerStatus, type ModelConfig } from './types'
      `import type { useToast } from '@nuxt/ui'` 会 TS2614、子路径导出 TS2307），
      与 useModelLoadingToast.ts 直接裸用 useToast() 同一约定。
 */
-export function useRecognize(options: { t: (k: string) => string, toast: ReturnType<typeof useToast> }) {
+export function useRecognize(options: { t: (k: string) => string, toast: ReturnType<typeof useToast>, source?: 'ocr' | 'write' }) {
   const { t, toast } = options
+  const source = options.source ?? 'ocr'
+  // 识别历史（Task 1 的存储 composable）：成功识别后自动写入；defaultStorage 内部
+  // 已 try-catch 包住 localStorage，SSR 预渲染 setup 阶段安全（读到 null 即空列表）
+  const history = useRecognitionHistory()
   const recognizing = ref(false)
   const confidenceValue: Ref<number | null> = ref(null)
 
@@ -88,6 +94,14 @@ export function useRecognize(options: { t: (k: string) => string, toast: ReturnT
         color: 'success',
         duration: 1500
       })
+      // 识别历史写入（/ocr 与 /write 共用收口）：成功 toast 之后、return 之前，
+      // toast 响应优先；缩略图失败 makeThumb 返回 null、其余异常在此吞掉，
+      // 历史写入失败不阻断识别（识别结果照常返回给页面）
+      try {
+        const engineName = cloudProvider ? providerDisplayName(cloudProvider) : t('history_engine_local')
+        const thumb = await makeThumb(file)
+        history.add({ latex: formatted, thumb, engine: engineName, source })
+      } catch { /* 历史写入失败不阻断识别 */ }
       return formatted
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)

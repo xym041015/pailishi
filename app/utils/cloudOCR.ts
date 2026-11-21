@@ -244,6 +244,15 @@ export function customProviderName(id: string): string {
   return seq ? `自定义 ${seq}` : '自定义'
 }
 
+/*
+  供应商显示名（与 SettingsDrawer / write.vue 引擎 pill 同源规则）：
+  config.name → 预设 label → customProviderName 兜底（识别历史徽章也用它）。
+*/
+export function providerDisplayName(p: { id: string, config: { name?: string } }): string {
+  const preset = PROVIDER_PRESETS.find(x => x.id === p.id)
+  return p.config.name || preset?.label || customProviderName(p.id)
+}
+
 export function createCustomProvider(settings: EngineSettings): { settings: EngineSettings, newId: string } {
   const next = JSON.parse(JSON.stringify(settings))
   let seq = next.customIds.length + 1

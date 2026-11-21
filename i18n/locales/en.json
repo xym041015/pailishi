@@ -196,5 +196,6 @@
   "write_engine_label": "Engine",
   "write_engine_local": "Local model (verify handwriting output)",
   "write_local_notice": "Please double-check handwriting results; for messy strokes, switch to a cloud engine in Settings",
-  "write_caption": "Fig · Handwriting board: write → recognize → copy into Word"
+  "write_caption": "Fig · Handwriting board: write → recognize → copy into Word",
+  "history_engine_local": "Local"
 }
