@@ -154,11 +154,13 @@ export function useRecognitionHistory(storage: HistoryStorage = defaultStorage()
     } catch { return [] }
   }
   function persist() {
-    // 配额超限 → 淘汰最旧重试，直至成功或空
-    while (items.value.length > 0) {
-      if (storage.write(JSON.stringify(items.value))) return
-      items.value.pop()
-    }
+    // false = 配额超限 → 淘汰最旧重试直至成功或空；throw = 存储损坏 → 停止持久化，保留内存会话态
+    try {
+      while (items.value.length > 0) {
+        if (storage.write(JSON.stringify(items.value))) return
+        items.value.pop()
+      }
+    } catch { /* 存储不可用：仅内存 */ }
   }
   function add(entry: { latex: string; thumb: string | null; engine: string; source: 'ocr' | 'write' }) {
     const latex = entry.latex.trim()
